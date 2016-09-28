@@ -32,7 +32,6 @@ MainWindow::~MainWindow()
 
 }
 
-// test git
 
 void MainWindow::resizeEvent(QResizeEvent *){
     //lbImage->setPixmap(lbImage->pixmap()->scaled(this->size(), Qt::KeepAspectRatio));
