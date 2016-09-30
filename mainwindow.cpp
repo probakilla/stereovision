@@ -1,34 +1,32 @@
 #include "mainwindow.h"
 
-
-#define MINIMUM_HEIGHT 100
-#define MINIMUM_WIDTH 300
-
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
 {
-    setMinimumHeight(MINIMUM_HEIGHT);
-    setMinimumWidth(MINIMUM_WIDTH);
-    this->setMouseTracking(true);
-    lbImage = new QLabel(this);
-    setCentralWidget(lbImage);
-    menuBar = new QMenuBar(this);
+    this->showMaximized();
+
+    picture = new QLabel(this);
+    picture->show();
+    pixMap = new QPixmap();
 
     menuFile = new QMenu("Fichier");
-    menuHelp = new QMenu("Aide");
     menuTraitement = new QMenu("Traitement");
-    actionOpenFile = menuFile->addAction("Ouvrir");
-    actionQuit = menuFile->addAction("Quitter");
-    actionCrop = menuTraitement->addAction("Selection");
-    menuBar->addMenu(menuFile);
-    actionAbout = menuHelp->addAction("A propos");
-    menuBar->addMenu(menuHelp);
-    menuBar->addMenu(menuTraitement);
-    setMenuBar(menuBar);
+    menuHelp = new QMenu("Aide");
+    menuBar = new QMenuBar(this);
+        menuBar->addMenu(menuFile);
+        menuBar->addMenu(menuTraitement);
+        menuBar->addMenu(menuHelp);
+        this->setMenuBar(menuBar);
 
-    connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
-    connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
-    connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+    actionOpenFile = menuFile->addAction("Ouvrir");
+        actionOpenFile->setShortcut(tr("Ctrl+O"));
+        connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
+    actionQuit = menuFile->addAction("Quitter");
+        actionQuit->setShortcut(tr("Ctrl+Q"));
+        connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+    actionAbout = menuHelp->addAction("A propos");
+        actionAbout->setShortcut(tr("Ctrl+H"));
+        connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
+    actionCrop = menuTraitement->addAction("Selection");
 }
 
 MainWindow::~MainWindow()
@@ -36,10 +34,19 @@ MainWindow::~MainWindow()
 
 }
 
-
-void MainWindow::resizeEvent(QResizeEvent *)
+void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    //lbImage->setPixmap(lbImage->pixmap()->scaled(this->size(), Qt::KeepAspectRatio));
+    QMainWindow::resizeEvent(event);
+    set_pictures_to_full_size();
+}
+
+void MainWindow::set_pictures_to_full_size()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+            picture->setPixmap( pixMap->scaled(this->width(),this->height(), Qt::KeepAspectRatio));
+            picture->adjustSize();
+    }
 }
 
 void MainWindow::msgBoxAbout()
@@ -51,15 +58,12 @@ void MainWindow::msgBoxAbout()
 
 void MainWindow::openFile()
 {
-    /*QMessageBox mBoxFileName;
-    mBoxFileName.setText(QFileDialog::getOpenFileName(this, tr("OuvrirFichier"), "/home"));
-    mBoxFileName.exec();*/
+    QFileDialog file_dialog(this);
+    QString path = file_dialog.getOpenFileName(this);
+    QImageReader reader(path);
+    *pixMap = QPixmap::fromImage(reader.read());
 
-    imgReader = new QImageReader(QFileDialog::getOpenFileName(this, tr("Open Image"), "/home", tr("Images (*.png *.jpg *.bmp)")));
-    lbImage->setPixmap(QPixmap::fromImageReader(imgReader));
-    lbImage->setFixedSize(lbImage->pixmap()->size());
-    lbImage->pixmap()->scaled(lbImage->pixmap()->size(), Qt::KeepAspectRatio);
-    MainWindow::resize(lbImage->size().width(), lbImage->size().height());
+    set_pictures_to_full_size();
 }
 
 void MainWindow::crop(QMouseEvent *event)

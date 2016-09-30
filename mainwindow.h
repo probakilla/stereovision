@@ -21,24 +21,28 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    virtual void resizeEvent(QResizeEvent *event);
 
 public slots:
     void msgBoxAbout();
     void openFile();
-    void resizeEvent(QResizeEvent *);
     void crop(QMouseEvent *event);
 
 private:
+    void set_pictures_to_full_size();
+
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuHelp;
     QMenu *menuTraitement;
+
     QAction *actionOpenFile;
     QAction *actionQuit;
     QAction *actionAbout;
     QAction *actionCrop;
-    QLabel *lbImage;
-    QImageReader *imgReader;
+
+    QPixmap *pixMap;
+    QLabel *picture;
 };
 
 #endif // MAINWINDOW_H
