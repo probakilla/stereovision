@@ -2,37 +2,42 @@
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
 {
+    setWindowFlags(Qt::WA_Moved );
     this->showMaximized();
+    this->setMinimumSize(800,600);
 
-    widget = new QWidget;
+    QWidget* widget = new QWidget;
     setCentralWidget(widget);
     picture = new QLabel(widget);
     picture->show();
     pixMap = new QPixmap();
 
-    menuFile = new QMenu("Fichier");
+    QMenu* menuFile = new QMenu("Fichier");
 
-    menuHelp = new QMenu("Aide");
-    menuBar = new QMenuBar(this);
+    QMenu* menuHelp = new QMenu("Aide");
+    QMenuBar* menuBar = new QMenuBar(this);
         menuBar->addMenu(menuFile);
         menuBar->addMenu(menuHelp);
         this->setMenuBar(menuBar);
 
-    actionOpenFile = menuFile->addAction("Ouvrir");
+    QAction* actionOpenFile = menuFile->addAction("Ouvrir");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
-    actionQuit = menuFile->addAction("Quitter");
+    QAction* actionQuit = menuFile->addAction("Quitter");
         actionQuit->setShortcut(tr("Ctrl+Q"));
         connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-    actionAbout = menuHelp->addAction("A propos");
+    QAction* actionAbout = menuHelp->addAction("A propos");
         actionAbout->setShortcut(tr("Ctrl+H"));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
 }
 
+
 MainWindow::~MainWindow()
 {
-
+    delete pixMap;
+    delete picture;
 }
+
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
@@ -66,12 +71,12 @@ void MainWindow::openFile()
     set_pictures_to_full_size();
 }
 
+
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton)
     {
         QString strPos = QString::number(event->x() - picture->x());
         strPos.append(" ").append(QString::number(event->y() - picture->y()));
-        picture->setText(strPos);
     }
 }

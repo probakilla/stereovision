@@ -24,6 +24,7 @@ public:
     ~MainWindow();
     virtual void resizeEvent(QResizeEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void moveEvent(QMoveEvent *event);
 
 public slots:
     void msgBoxAbout();
@@ -33,15 +34,6 @@ public slots:
 private:
     void set_pictures_to_full_size();
 
-    QMenuBar *menuBar;
-    QMenu *menuFile;
-    QMenu *menuHelp;
-
-    QAction *actionOpenFile;
-    QAction *actionQuit;
-    QAction *actionAbout;
-
-    QWidget *widget;
     QPixmap *pixMap;
     QLabel *picture;
 };
