@@ -15,7 +15,7 @@
 #include <QTextStream>
 #include <QWidget>
 #include <QRect>
-#include <cmath>
+
 
 class MainWindow : public QMainWindow
 {

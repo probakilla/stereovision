@@ -48,7 +48,7 @@ void MainWindow::set_pictures_to_full_size()
 {
     if( pixMap && picture && !pixMap->isNull())
     {
-            picture->setPixmap( *pixMap/*->scaled(this->width(),this->height(), Qt::KeepAspectRatio)*/);
+            picture->setPixmap( pixMap->scaled(this->width(),this->height(), Qt::KeepAspectRatio));
             picture->adjustSize();
     }
 }
@@ -70,6 +70,7 @@ void MainWindow::openFile()
     set_pictures_to_full_size();
 }
 
+// --- TENTATIVE DE CROP NE FONCTIONNE PAS CORRECTEMENT --------
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
