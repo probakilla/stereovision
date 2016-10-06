@@ -9,11 +9,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
     pixMap = new QPixmap();
 
     menuFile = new QMenu("Fichier");
-    menuTraitement = new QMenu("Traitement");
+
     menuHelp = new QMenu("Aide");
     menuBar = new QMenuBar(this);
         menuBar->addMenu(menuFile);
-        menuBar->addMenu(menuTraitement);
         menuBar->addMenu(menuHelp);
         this->setMenuBar(menuBar);
 
@@ -26,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
     actionAbout = menuHelp->addAction("A propos");
         actionAbout->setShortcut(tr("Ctrl+H"));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
-    actionCrop = menuTraitement->addAction("Selection");
 }
 
 MainWindow::~MainWindow()
@@ -66,17 +64,12 @@ void MainWindow::openFile()
     set_pictures_to_full_size();
 }
 
-void MainWindow::crop(QMouseEvent *event)
+void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-
-    /*QMessageBox test;
-    if (event->button() == Qt::LeftButton)
+    if (event->buttons() == Qt::LeftButton)
     {
-        QPoint p = event->pos();
-
-        QString str = QString::number(p.x());
-        test.setText(str);
-        test.exec();
-    }*/
-
+        QString strPos = QString::number(event->x() - picture->x());
+        strPos.append(" ").append(QString::number(event->y() - picture->y()));
+        picture->setText(strPos);
+    }
 }

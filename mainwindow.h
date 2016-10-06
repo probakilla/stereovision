@@ -22,11 +22,12 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     virtual void resizeEvent(QResizeEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 
 public slots:
     void msgBoxAbout();
     void openFile();
-    void crop(QMouseEvent *event);
+
 
 private:
     void set_pictures_to_full_size();
@@ -34,12 +35,10 @@ private:
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuHelp;
-    QMenu *menuTraitement;
 
     QAction *actionOpenFile;
     QAction *actionQuit;
     QAction *actionAbout;
-    QAction *actionCrop;
 
     QPixmap *pixMap;
     QLabel *picture;
