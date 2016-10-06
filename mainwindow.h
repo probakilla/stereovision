@@ -13,6 +13,7 @@
 #include <QPoint>
 #include <QMouseEvent>
 #include <QTextStream>
+#include <QWidget>
 
 class MainWindow : public QMainWindow
 {
@@ -40,6 +41,7 @@ private:
     QAction *actionQuit;
     QAction *actionAbout;
 
+    QWidget *widget;
     QPixmap *pixMap;
     QLabel *picture;
 };

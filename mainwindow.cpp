@@ -4,7 +4,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
 {
     this->showMaximized();
 
-    picture = new QLabel(this);
+    widget = new QWidget;
+    setCentralWidget(widget);
+    picture = new QLabel(widget);
     picture->show();
     pixMap = new QPixmap();
 
