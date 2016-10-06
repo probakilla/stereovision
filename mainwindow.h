@@ -14,6 +14,8 @@
 #include <QMouseEvent>
 #include <QTextStream>
 #include <QWidget>
+#include <QRect>
+#include <cmath>
 
 class MainWindow : public QMainWindow
 {
@@ -24,7 +26,8 @@ public:
     ~MainWindow();
     virtual void resizeEvent(QResizeEvent *event);
     void mousePressEvent(QMouseEvent *event);
-    void moveEvent(QMoveEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+
 
 public slots:
     void msgBoxAbout();
@@ -34,6 +37,10 @@ public slots:
 private:
     void set_pictures_to_full_size();
 
+    int x1;
+    int y1;
+    int x2;
+    int y2;
     QPixmap *pixMap;
     QLabel *picture;
 };

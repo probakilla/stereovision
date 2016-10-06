@@ -2,7 +2,6 @@
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
 {
-    setWindowFlags(Qt::WA_Moved );
     this->showMaximized();
     this->setMinimumSize(800,600);
 
@@ -49,7 +48,7 @@ void MainWindow::set_pictures_to_full_size()
 {
     if( pixMap && picture && !pixMap->isNull())
     {
-            picture->setPixmap( pixMap->scaled(this->width(),this->height(), Qt::KeepAspectRatio));
+            picture->setPixmap( *pixMap/*->scaled(this->width(),this->height(), Qt::KeepAspectRatio)*/);
             picture->adjustSize();
     }
 }
@@ -71,12 +70,27 @@ void MainWindow::openFile()
     set_pictures_to_full_size();
 }
 
-
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (event->buttons() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton)
     {
-        QString strPos = QString::number(event->x() - picture->x());
-        strPos.append(" ").append(QString::number(event->y() - picture->y()));
+        x1 = event->x();
+        y1 = event->y();
     }
 }
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        x2 = event->x();
+        y2 = event->y();
+        QRect rect(x1, y1, x2 - x1, y2 - y1);
+        QPixmap cropped = pixMap->copy(rect);
+        cropped.save("cropped_image.jpg");
+        QImageReader reader("cropped_image.jpg");
+        *pixMap = QPixmap::fromImage(reader.read());
+        set_pictures_to_full_size();
+    }
+}
+
