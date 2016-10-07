@@ -25,9 +25,6 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     virtual void resizeEvent(QResizeEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-
 
 public slots:
     void msgBoxAbout();
@@ -37,10 +34,6 @@ public slots:
 private:
     void set_pictures_to_full_size();
 
-    int x1;
-    int y1;
-    int x2;
-    int y2;
     QPixmap *pixMap;
     QLabel *picture;
 };

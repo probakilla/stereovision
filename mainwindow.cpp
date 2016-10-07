@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "imageprocessor.h"
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
 {
@@ -69,29 +70,3 @@ void MainWindow::openFile()
 
     set_pictures_to_full_size();
 }
-
-// --- TENTATIVE DE CROP NE FONCTIONNE PAS CORRECTEMENT --------
-void MainWindow::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        x1 = event->x();
-        y1 = event->y();
-    }
-}
-
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        x2 = event->x();
-        y2 = event->y();
-        QRect rect(x1, y1, x2 - x1, y2 - y1);
-        QPixmap cropped = pixMap->copy(rect);
-        cropped.save("cropped_image.jpg");
-        QImageReader reader("cropped_image.jpg");
-        *pixMap = QPixmap::fromImage(reader.read());
-        set_pictures_to_full_size();
-    }
-}
-
