@@ -4,11 +4,15 @@
 DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), sizeCorner{sizeCorners}
 {
     setMouseTracking(true);
+    setAutoFillBackground(true);
 
     tlc = new MovableButton(this,sizeCorners);
     trc = new MovableButton(this,sizeCorners);
     blc = new MovableButton(this,sizeCorners);
     brc = new MovableButton(this,sizeCorners);
+
+    rect = new QRubberBand(QRubberBand::Rectangle, this);
+    rect->show();
 }
 
 /**
@@ -41,20 +45,23 @@ void DynamicFrame::moveCorners(QPoint pos)
         brc->move(pos);
         blc->move(blc->x(),pos.y());
         trc->move(pos.x(), trc->y());
-
     }
+}
+
+void DynamicFrame::setSelectionRectangle()
+{
+    int x = (tlc->x() < trc->x() ? tlc->x() : trc->x());
+    int y = (tlc->y() < blc->y() ? tlc->y() : blc->y());
+    int w = abs(tlc->x() - trc->x());
+    int h = abs(tlc->y() - blc->y());
+
+    rect->setGeometry(x, y, w+sizeCorner, h+sizeCorner);
 }
 
 void DynamicFrame::mouseMoveEvent(QMouseEvent * event)
 {
-    //QWidget::mouseMoveEvent(event);
-
     moveCorners(event->pos() - QPoint(sizeCorner,sizeCorner)/2);
-
-     //GET A QSTRING FROM A stringstream
-    /*std::stringstream ss;
-    ss << tlc->x();
-    text->setText( QString(ss.str().c_str()));*/
+    setSelectionRectangle();
 }
 
 void DynamicFrame::resizeEvent(QResizeEvent *event)

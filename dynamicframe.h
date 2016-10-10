@@ -3,11 +3,13 @@
 
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 #include <QWidget>
 #include <QResizeEvent>
 #include <QLabel>
 #include <QPixmap>
+#include <QRubberBand>
 
 #include <movablebutton.h>
 
@@ -18,18 +20,21 @@ class DynamicFrame : public QWidget
 public:
     DynamicFrame(QWidget *parent = nullptr, int sizeCorners = 30);
 
-private:
+protected:
     virtual void resizeEvent(QResizeEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
-    void moveCorners(QPoint pos);
 
+private:
+    void moveCorners(QPoint pos);
+    void setSelectionRectangle();
+
+    int sizeCorner;
 
     MovableButton* tlc;
     MovableButton* trc;
     MovableButton* blc;
     MovableButton* brc;
-
-    int sizeCorner;
+    QRubberBand* rect;
 
 };
 
