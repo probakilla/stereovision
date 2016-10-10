@@ -18,10 +18,6 @@ class DynamicFrame : public QWidget
 public:
     DynamicFrame(QWidget *parent = nullptr, int sizeCorners = 30);
 
-private slots:
-    void callMouseMoveEvent( QMouseEvent *event);
-    void callMousePressedEvent( QMouseEvent *event);
-
 private:
     virtual void resizeEvent(QResizeEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
@@ -33,7 +29,6 @@ private:
     MovableButton* blc;
     MovableButton* brc;
 
-    QLabel* text;
     int sizeCorner;
 
 };

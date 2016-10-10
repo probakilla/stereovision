@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "imageprocessor.h"
 
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{}
 {
     this->showMaximized();
     this->setMinimumSize(800,600);
@@ -11,6 +11,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}
     picture = new QLabel(widget);
     picture->show();
     pixMap = new QPixmap();
+
+    dFrame = new DynamicFrame(this);
+    dFrame->move(30,30);
+    dFrame->show();
 
     QMenu* menuFile = new QMenu("Fichier");
 
@@ -43,6 +47,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
     set_pictures_to_full_size();
+    if(dFrame)
+        dFrame->resize(event->size());
 }
 
 void MainWindow::set_pictures_to_full_size()

@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QMouseEvent>
+#include <QPainter>
 
 /**
  * @brief The MovableButton class acts like a button, it emits isDown when the user
@@ -24,6 +25,7 @@ class MovableButton : public QLabel
     protected:
         virtual void mousePressEvent(QMouseEvent * event);
         virtual void mouseReleaseEvent(QMouseEvent * event);
+        virtual void paintEvent(QPaintEvent * event);
 
     private:
         bool moving;

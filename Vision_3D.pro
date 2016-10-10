@@ -14,7 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    imageprocessor.cpp
+    imageprocessor.cpp \
+    movablebutton.cpp \
+    dynamicframe.cpp
 
 HEADERS  += mainwindow.h \
-    imageprocessor.h
+    imageprocessor.h \
+    movablebutton.h \
+    dynamicframe.h

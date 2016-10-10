@@ -16,6 +16,8 @@
 #include <QWidget>
 #include <QRect>
 
+#include <dynamicframe.h>
+
 
 class MainWindow : public QMainWindow
 {
@@ -36,6 +38,7 @@ private:
 
     QPixmap *pixMap;
     QLabel *picture;
+    DynamicFrame* dFrame;
 };
 
 #endif // MAINWINDOW_H

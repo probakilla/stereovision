@@ -5,15 +5,10 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
 {
     setMouseTracking(true);
 
-    tlc = new MovableButton(this);
-    trc = new MovableButton(this);
-    blc = new MovableButton(this);
-    brc = new MovableButton(this);
-
-
-    //tmp
-    text = new QLabel(this);
-    text->setText("NOT UPDATED");
+    tlc = new MovableButton(this,sizeCorners);
+    trc = new MovableButton(this,sizeCorners);
+    blc = new MovableButton(this,sizeCorners);
+    brc = new MovableButton(this,sizeCorners);
 }
 
 /**
@@ -47,34 +42,19 @@ void DynamicFrame::moveCorners(QPoint pos)
         blc->move(blc->x(),pos.y());
         trc->move(pos.x(), trc->y());
 
-    }class dynamicFrame
-    {
-    public:
-        dynamicFrame();
-    };
-
-}
-
-void DynamicFrame::callMouseMoveEvent( QMouseEvent *event)
-{
-    mouseMoveEvent(event);
-}
-
-void DynamicFrame::callMousePressedEvent( QMouseEvent *event)
-{
-    mousePressEvent(event);
+    }
 }
 
 void DynamicFrame::mouseMoveEvent(QMouseEvent * event)
 {
-    QWidget::mouseMoveEvent(event);
+    //QWidget::mouseMoveEvent(event);
 
     moveCorners(event->pos() - QPoint(sizeCorner,sizeCorner)/2);
 
      //GET A QSTRING FROM A stringstream
-    std::stringstream ss;
+    /*std::stringstream ss;
     ss << tlc->x();
-    text->setText( QString(ss.str().c_str()));
+    text->setText( QString(ss.str().c_str()));*/
 }
 
 void DynamicFrame::resizeEvent(QResizeEvent *event)
