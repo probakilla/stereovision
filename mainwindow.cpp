@@ -70,7 +70,7 @@ void MainWindow::msgBoxAbout()
 void MainWindow::openFile()
 {
     QFileDialog file_dialog(this);
-    QString path = file_dialog.getOpenFileName(this);
+    QString path = file_dialog.getOpenFileName(this, "Ouvrir une image", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
     QImageReader reader(path);
     *pixMap = QPixmap::fromImage(reader.read());
 
