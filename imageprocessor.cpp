@@ -42,8 +42,11 @@ void imageprocessor::save()
 void imageprocessor::affichage()
 {
     QWidget* widget = new QWidget;
-    //_cropedImage = new QLabel(widget);
-    //_cropedImage->show();
+    widget->setMinimumSize(800, 600);
+    _cropedImage = new QLabel(widget);
+    _cropedImage->setPixmap(QPixmap::fromImage(_image));
+    _cropedImage->show();
+
 
     QPushButton *save = new QPushButton("Enregistrer");
     connect(save, SIGNAL(clicked()), this, SLOT(save()));
