@@ -1,7 +1,7 @@
 #ifndef IMAGEPROCESSOR_H
 #define IMAGEPROCESSOR_H
 
-#include <QPixmap>
+#include <QImage>
 #include <QRect>
 #include <QWidget>
 #include <QLabel>
@@ -14,7 +14,7 @@ class imageprocessor: public QWidget
 {
     Q_OBJECT
 public:
-    imageprocessor(QPixmap image);
+    imageprocessor(QImage image);
     void affichage();
     void crop(QRect rect);
 
@@ -24,7 +24,7 @@ public slots:
 
 
 private:
-    QPixmap _image;
+    QImage _image;
     QLabel *_cropedImage;
     bool _isCroped;
 };

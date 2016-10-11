@@ -1,6 +1,8 @@
 #include "imageprocessor.h"
 
-imageprocessor::imageprocessor(QPixmap image)
+#include <QImage>
+
+imageprocessor::imageprocessor(QImage image)
 {
     _image = image;
     _isCroped = false;
@@ -9,7 +11,25 @@ imageprocessor::imageprocessor(QPixmap image)
 
 void imageprocessor::crop(QRect rect)
 {
+    _isCroped = true;
+    QImage* tmp = new QImage (rect.width(), rect.height(), _image.format());
 
+    int top_y = rect.topLeft().y();
+    int top_x = rect.topLeft().x();
+
+    // Copy the left rectangle of the image.
+    for (int y = 0; y < rect.height(); ++y)
+        for (int x = 0; x < rect.width(); ++x)
+            tmp->setPixel(x, y, _image.pixel(x + top_x, y + top_y));
+
+    int top_middle_x = (_image.width() / 2) + top_x;
+
+    // Copy the right rectangle of the image.
+    for (int y = 0; y < rect.height(); ++y)
+        for (int x = rect.width(); x < tmp->width(); ++x)
+            tmp->setPixel(x, y, _image.pixel(x + top_middle_x, y + top_y));
+
+    _image = tmp->copy();
 }
 
 
