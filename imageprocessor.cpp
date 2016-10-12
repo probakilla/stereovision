@@ -35,7 +35,8 @@ void imageprocessor::crop(QRect rect)
 
 void imageprocessor::save()
 {
-    QFileDialog::getOpenFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
+    QString path = QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
+    _image.save(path);
 }
 
 

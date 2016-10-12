@@ -11,6 +11,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QSize>
+#include <QString>
 
 
 
