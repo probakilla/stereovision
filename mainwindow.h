@@ -31,6 +31,7 @@ public:
 public slots:
     void msgBoxAbout();
     void openFile();
+    void diviserImageEnDeux();
 
 
 private:
