@@ -51,6 +51,7 @@ void imageprocessor::affichage()
 
     QPushButton *save = new QPushButton("Enregistrer");
     connect(save, SIGNAL(clicked()), this, SLOT(save()));
+    connect(save, SIGNAL(clicked()), this, SLOT(close()));
     QPushButton *cancel = new QPushButton("Annuler");
     connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
 
