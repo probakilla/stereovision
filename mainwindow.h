@@ -15,6 +15,7 @@
 #include <QTextStream>
 #include <QWidget>
 #include <QRect>
+#include <QToolBar>
 
 #include <dynamicframe.h>
 

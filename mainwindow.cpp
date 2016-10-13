@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
 
     dFrame = new DynamicFrame(widget);
     dFrame->setPalette(Qt::transparent);
-    dFrame->show();
 
     QMenu* menuFile = menuBar()->addMenu("&Fichier");
 
@@ -28,6 +27,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionAbout = menuHelp->addAction("A propos");
         actionAbout->setShortcut(tr("Ctrl+H"));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
+
+    // Création de la barre d'outils
+    QToolBar *toolBar = addToolBar("Tools");
+    QAction* actionCrop = toolBar->addAction("Crop");
+        actionCrop->setShortcut(tr("Ctrl+K"));
+    toolBar->addAction(actionCrop);
 }
 
 
