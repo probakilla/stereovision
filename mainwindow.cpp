@@ -107,6 +107,8 @@ void MainWindow::crop( QRect area)
 
     *pixMap = pixMap->copy(area);
     picture->setPixmap(*pixMap);
+     set_pictures_to_full_size();
+
 }
 
 void MainWindow::diviserImageEnDeux(){
