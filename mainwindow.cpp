@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     picture->show();
     pixMap = new QPixmap();
 
-    dFrame = new DynamicFrame(this);
-    dFrame->move(30,30);
+    dFrame = new DynamicFrame(widget);
+    dFrame->setPalette(Qt::transparent);
     dFrame->show();
 
     QMenu* menuFile = menuBar()->addMenu("&Fichier");

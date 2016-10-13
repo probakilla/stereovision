@@ -13,6 +13,6 @@ void MovableButton::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
         QRectF rectangle(0,0,width()-1, height()-1 );
-        p.setPen(QPen(Qt::black,5));
+        p.setPen(QPen(Qt::gray,5));
         p.drawRect(rectangle);
 }
