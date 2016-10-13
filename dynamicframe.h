@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QRubberBand>
+#include <QGraphicsColorizeEffect>
 
 #include <movablebutton.h>
 

@@ -15,6 +15,7 @@
 #include <QTextStream>
 #include <QWidget>
 #include <QRect>
+#include <QToolBar>
 
 #include <dynamicframe.h>
 
@@ -31,6 +32,7 @@ public:
 public slots:
     void msgBoxAbout();
     void openFile();
+    void diviserImageEnDeux();
 
 
 private:

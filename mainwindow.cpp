@@ -12,18 +12,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     picture->show();
     pixMap = new QPixmap();
 
-    dFrame = new DynamicFrame(this);
-    dFrame->move(30,30);
-    dFrame->show();
+    dFrame = new DynamicFrame(widget);
+    dFrame->setPalette(Qt::transparent);
 
-    QMenu* menuFile = new QMenu("Fichier");
+    QMenu* menuFile = menuBar()->addMenu("&Fichier");
 
-    QMenu* menuHelp = new QMenu("Aide");
-    QMenuBar* menuBar = new QMenuBar(this);
-        menuBar->addMenu(menuFile);
-        menuBar->addMenu(menuHelp);
-        this->setMenuBar(menuBar);
-
+    QMenu* menuHelp = menuBar()->addMenu("&Aide");
     QAction* actionOpenFile = menuFile->addAction("Ouvrir");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
@@ -33,6 +27,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionAbout = menuHelp->addAction("A propos");
         actionAbout->setShortcut(tr("Ctrl+H"));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
+
+    // Création de la barre d'outils
+    QToolBar *toolBar = addToolBar("Tools");
+    QAction* actionCrop = toolBar->addAction("Crop");
+        actionCrop->setShortcut(tr("Ctrl+K"));
+    toolBar->addAction(actionCrop);
 }
 
 
@@ -74,5 +74,15 @@ void MainWindow::openFile()
     QImageReader reader(path);
     *pixMap = QPixmap::fromImage(reader.read());
 
+    QMenu* menuEdition = menuBar()->addMenu("&Edition");
+    QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
+        actionDivision->setShortcut(tr("Ctrl+D"));
+        connect(actionDivision, SIGNAL(triggered()), this, SLOT(diviserImageEnDeux()));
+
     set_pictures_to_full_size();
+}
+
+//A faire quand je pourrais voir l'image
+void MainWindow::diviserImageEnDeux(){
+
 }

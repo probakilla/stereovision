@@ -2,6 +2,7 @@
 #define IMAGEPROCESSOR_H
 
 #include <QImage>
+#include <QPixmap>
 #include <QRect>
 #include <QWidget>
 #include <QLabel>
@@ -9,6 +10,10 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QSize>
+#include <QString>
+
+
 
 class imageprocessor: public QWidget
 {

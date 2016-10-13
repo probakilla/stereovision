@@ -12,6 +12,9 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
     brc = new MovableButton(this,sizeCorners);
 
     rect = new QRubberBand(QRubberBand::Rectangle, this);
+    QGraphicsColorizeEffect *e = new QGraphicsColorizeEffect(rect);
+    e->setColor(QColor("black"));
+    rect->setGraphicsEffect(e);
     rect->show();
 }
 
