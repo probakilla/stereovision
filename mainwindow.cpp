@@ -83,6 +83,7 @@ void MainWindow::openFile()
 }
 
 //A faire quand je pourrais voir l'image
-void MainWindow::diviserImageEnDeux(){
+void MainWindow::diviserImageEnDeux()
+{
 
 }
