@@ -16,6 +16,7 @@
 #include <QWidget>
 #include <QRect>
 #include <QToolBar>
+#include <QVBoxLayout>
 
 #include <dynamicframe.h>
 
@@ -34,14 +35,21 @@ public:
 public slots:
     void msgBoxAbout();
     void openFile();
+    void saveName();
     void crop( QRect area);
+    void diviserImageEnDeux();
 
 private:
     void set_pictures_to_full_size();
 
+    QWidget *widget;
+
     QPixmap *pixMap;
     QLabel *picture;
     DynamicFrame* dFrame;
+
+    QPixmap *pixMapDivided;
+    QLabel *divided;
 };
 
 #endif // MAINWINDOW_H

@@ -6,11 +6,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     this->showMaximized();
     this->setMinimumSize(800,600);
 
-    QWidget* widget = new QWidget;
+    widget = new QWidget(this);
     setCentralWidget(widget);
 
     picture = new QLabel(widget);
-    picture->show();
     pixMap = new QPixmap();
 
     dFrame = new DynamicFrame(widget);
@@ -18,9 +17,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     connect( dFrame, SIGNAL(cropped(QRect)), this, SLOT(crop(QRect)));
 
     QMenu* menuFile = menuBar()->addMenu("&Fichier");
-
-    QMenu* menuHelp = menuBar()->addMenu("&Aide");
     QAction* actionOpenFile = menuFile->addAction("Ouvrir");
+    QMenu* menuEdition = menuBar()->addMenu("&Edition");
+    QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
+        actionDivision->setShortcut(tr("Ctrl+D"));
+        connect(actionDivision, SIGNAL(triggered()), this, SLOT(diviserImageEnDeux()));
+    QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
     QAction* actionQuit = menuFile->addAction("Quitter");
@@ -29,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionAbout = menuHelp->addAction("A propos");
         actionAbout->setShortcut(tr("Ctrl+H"));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
+
+    QAction* actionSaveName = menuFile->addAction("&Enregistrer sous");
+        connect(actionSaveName, SIGNAL(triggered()), this, SLOT(saveName()));
 
     // Création de la barre d'outils
     QToolBar *toolBar = addToolBar("Tools");
@@ -76,17 +81,21 @@ void MainWindow::openFile()
     QImageReader reader(path);
     *pixMap = QPixmap::fromImage(reader.read());
 
-    QMenu* menuEdition = menuBar()->addMenu("&Edition");
-    QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
-        actionDivision->setShortcut(tr("Ctrl+D"));
-        connect(actionDivision, SIGNAL(triggered()), this, SLOT(diviserImageEnDeux()));
 
     set_pictures_to_full_size();
 }
 
+void MainWindow::saveName()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        pixMap->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)"));
+    }
+}
+
 void MainWindow::crop( QRect area)
 {
-    std::stringstream ss;
+    /*std::stringstream ss;
     ss << "x: " << area.x() << std::endl;
     ss << "y: " << area.y() << std::endl;
     ss << "w: " << area.width() << std::endl;
@@ -94,5 +103,22 @@ void MainWindow::crop( QRect area)
 
     QMessageBox msgBox;
     msgBox.setText(QString::fromStdString(ss.str()));
-    msgBox.exec();
+    msgBox.exec();*/
+
+    *pixMap = pixMap->copy(area);
+    picture->setPixmap(*pixMap);
+}
+
+void MainWindow::diviserImageEnDeux(){
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        pixMapDivided = new QPixmap();
+       *pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
+       *pixMap = pixMap->copy(0, 0, pixMap->width()/2, pixMap->height());
+        picture->setPixmap(*pixMap);
+        divided = new QLabel(widget);
+        divided->setPixmap(*pixMapDivided);
+        divided->move(pixMap->width()+5, 0);
+        divided->show();
+    }
 }
