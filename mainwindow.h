@@ -19,6 +19,8 @@
 
 #include <dynamicframe.h>
 
+#include <sstream>
+
 
 class MainWindow : public QMainWindow
 {
@@ -32,8 +34,7 @@ public:
 public slots:
     void msgBoxAbout();
     void openFile();
-    void diviserImageEnDeux();
-
+    void crop( QRect area);
 
 private:
     void set_pictures_to_full_size();

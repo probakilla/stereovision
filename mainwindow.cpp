@@ -8,12 +8,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
 
     QWidget* widget = new QWidget;
     setCentralWidget(widget);
+
     picture = new QLabel(widget);
     picture->show();
     pixMap = new QPixmap();
 
     dFrame = new DynamicFrame(widget);
     dFrame->setPalette(Qt::transparent);
+    connect( dFrame, SIGNAL(cropped(QRect)), this, SLOT(crop(QRect)));
 
     QMenu* menuFile = menuBar()->addMenu("&Fichier");
 
@@ -32,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QToolBar *toolBar = addToolBar("Tools");
     QAction* actionCrop = toolBar->addAction("Crop");
         actionCrop->setShortcut(tr("Ctrl+K"));
+        connect(actionCrop, SIGNAL(triggered()), dFrame, SLOT(launch()));
     toolBar->addAction(actionCrop);
 }
 
@@ -41,7 +44,6 @@ MainWindow::~MainWindow()
     delete pixMap;
     delete picture;
 }
-
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
@@ -82,8 +84,15 @@ void MainWindow::openFile()
     set_pictures_to_full_size();
 }
 
-//A faire quand je pourrais voir l'image
-void MainWindow::diviserImageEnDeux()
+void MainWindow::crop( QRect area)
 {
+    std::stringstream ss;
+    ss << "x: " << area.x() << std::endl;
+    ss << "y: " << area.y() << std::endl;
+    ss << "w: " << area.width() << std::endl;
+    ss << "h: " << area.height() << std::endl;
 
+    QMessageBox msgBox;
+    msgBox.setText(QString::fromStdString(ss.str()));
+    msgBox.exec();
 }
