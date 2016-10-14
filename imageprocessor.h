@@ -20,19 +20,23 @@ class imageprocessor: public QWidget
     Q_OBJECT
 public:
     imageprocessor(QImage image);
-    void affichage();
-    void imageResize(int width, int height);
-    void crop(QRect rect);
+    void display();
+    void imageResize(const int & width,const int & height);
+    void crop(const QRect & rect);
 
+
+    QImage image() const;
+
+    bool is_valid() const;
 
 public slots:
-    void save();
+    void validate();
 
 
 
 private:
     QImage _image;
-    bool _isCroped;
+    bool _is_valid;
 };
 
 #endif // IMAGEPROCESSOR_H

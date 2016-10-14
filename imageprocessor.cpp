@@ -4,16 +4,13 @@
 
 imageprocessor::imageprocessor(QImage image)
 {
+    _is_valid = false;
     _image = image;
-    _isCroped = false;
 }
 
 
-void imageprocessor::crop(QRect rect)
+void imageprocessor::crop(const QRect & rect)
 {
-    if(_isCroped == false)
-    {
-
         QImage* tmp = new QImage ((rect.width() * 2), rect.height(), _image.format());
 
         int top_y = rect.topLeft().y();
@@ -32,31 +29,25 @@ void imageprocessor::crop(QRect rect)
                 tmp->setPixel(x + (tmp->width() / 2), y, _image.pixel(x + top_middle_x, y + top_y));
 
         _image = tmp->copy();
-        this->affichage();
-    }
 }
 
-/*
-void imageprocessor::crop(QRect rect)
+QImage imageprocessor::image() const
 {
-    if(_isCroped == false)
-    {
+    return _image;
+}
 
-        QImage* tmp = new QImage ((rect.width() * 2), rect.height(), _image.format());
-
-        for (int y = rect.)
-    }
-*/
-
-void imageprocessor::save()
+bool imageprocessor::is_valid() const
 {
-    QString path = QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
-    _isCroped = true;
-    _image.save(path);
+    return _is_valid;
+}
+
+void imageprocessor::validate()
+{
+
 }
 
 
-void imageprocessor::affichage()
+void imageprocessor::display()
 {
     QWidget* widget = new QWidget;
     widget->setMinimumSize(800, 600);
@@ -66,15 +57,15 @@ void imageprocessor::affichage()
     _cropedImage->show();
 
 
-    QPushButton *save = new QPushButton("Enregistrer");
-    connect(save, SIGNAL(clicked()), this, SLOT(save()));
-    connect(save, SIGNAL(clicked()), this, SLOT(close()));
-    QPushButton *cancel = new QPushButton("Annuler");
-    connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
+    QPushButton *b_valider = new QPushButton("Enregistrer");
+    connect(b_valider, SIGNAL(clicked()), this, SLOT(validate()));
+    connect(b_valider, SIGNAL(clicked()), this, SLOT(close()));
+    QPushButton *b_cancel = new QPushButton("Annuler");
+    connect(b_cancel, SIGNAL(clicked()), this, SLOT(close()));
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout->addWidget(save);
-    buttonLayout->addWidget(cancel);
+    buttonLayout->addWidget(b_valider);
+    buttonLayout->addWidget(b_cancel);
     QVBoxLayout *primeLayout = new QVBoxLayout;
     primeLayout->addWidget(widget);
     primeLayout->addLayout(buttonLayout);
@@ -83,7 +74,7 @@ void imageprocessor::affichage()
     this->show();
 }
 
-void imageprocessor::imageResize(int width, int height)
+void imageprocessor::imageResize(const int & width,const int & height)
 {
     _image = _image.scaled(width, height, Qt::KeepAspectRatio);
 }
