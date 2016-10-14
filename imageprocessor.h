@@ -21,6 +21,7 @@ class imageprocessor: public QWidget
 public:
     imageprocessor(QImage image);
     void affichage();
+    void imageResize(int width, int height);
     void crop(QRect rect);
 
 
@@ -28,9 +29,9 @@ public slots:
     void save();
 
 
+
 private:
     QImage _image;
-    QLabel *_cropedImage;
     bool _isCroped;
 };
 

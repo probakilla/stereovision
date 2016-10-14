@@ -11,25 +11,29 @@ imageprocessor::imageprocessor(QImage image)
 
 void imageprocessor::crop(QRect rect)
 {
-    _isCroped = true;
-    QImage* tmp = new QImage (rect.width(), rect.height(), _image.format());
+    if(_isCroped == false)
+    {
+        _isCroped = true;
+        QImage* tmp = new QImage (rect.width(), rect.height(), _image.format());
 
-    int top_y = rect.topLeft().y();
-    int top_x = rect.topLeft().x();
+        int top_y = rect.topLeft().y();
+        int top_x = rect.topLeft().x();
 
-    // Copy the left rectangle of the image.
-    for (int y = 0; y < rect.height(); ++y)
-        for (int x = 0; x < rect.width(); ++x)
-            tmp->setPixel(x, y, _image.pixel(x + top_x, y + top_y));
+        // Copy the left rectangle of the image.
+        for (int y = 0; y < rect.height(); ++y)
+            for (int x = 0; x < rect.width(); ++x)
+                tmp->setPixel(x, y, _image.pixel(x + top_x, y + top_y));
 
-    int top_middle_x = (_image.width() / 2) + top_x;
+        int top_middle_x = (_image.width() / 2) + top_x;
 
-    // Copy the right rectangle of the image.
-    for (int y = 0; y < rect.height(); ++y)
-        for (int x = rect.width(); x < tmp->width(); ++x)
-            tmp->setPixel(x, y, _image.pixel(x + top_middle_x, y + top_y));
+        // Copy the right rectangle of the image.
+        for (int y = 0; y < rect.height(); ++y)
+            for (int x = rect.width(); x < tmp->width(); ++x)
+                tmp->setPixel(x, y, _image.pixel(x + top_middle_x, y + top_y));
 
-    _image = tmp->copy();
+        _image = tmp->copy();
+        this->affichage();
+    }
 }
 
 
@@ -44,6 +48,7 @@ void imageprocessor::affichage()
 {
     QWidget* widget = new QWidget;
     widget->setMinimumSize(800, 600);
+    widget->setAccessibleDescription("Voulez sauvegarder cette image");
     _cropedImage = new QLabel(widget);
     _cropedImage->setPixmap(QPixmap::fromImage(_image));
     _cropedImage->show();
@@ -64,4 +69,9 @@ void imageprocessor::affichage()
 
     this->setLayout(primeLayout);
     this->show();
+}
+
+void imageprocessor::imageResize(int width, int height)
+{
+    _image.scaled(width, height, Qt::KeepAspectRatio);
 }
