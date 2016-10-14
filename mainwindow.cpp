@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "imageprocessor.h"
+
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{}
 {
@@ -63,6 +63,7 @@ void MainWindow::set_pictures_to_full_size()
     if( pixMap && picture && !pixMap->isNull())
     {
             picture->setPixmap( pixMap->scaled(this->width(),this->height(), Qt::KeepAspectRatio));
+            i->imageResize(this->width(), this->height());
             picture->adjustSize();
     }
 }
@@ -79,7 +80,9 @@ void MainWindow::openFile()
     QFileDialog file_dialog(this);
     QString path = file_dialog.getOpenFileName(this, "Ouvrir une image", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
     QImageReader reader(path);
-    *pixMap = QPixmap::fromImage(reader.read());
+    QImage image = reader.read();
+    i = new imageprocessor(image);
+    *pixMap = QPixmap::fromImage(image);
 
 
     set_pictures_to_full_size();
@@ -103,11 +106,12 @@ void MainWindow::crop( QRect area)
 
     QMessageBox msgBox;
     msgBox.setText(QString::fromStdString(ss.str()));
-    msgBox.exec();*/
+    msgBox.exec();
 
     *pixMap = pixMap->copy(area);
-    picture->setPixmap(*pixMap);
-     set_pictures_to_full_size();
+    picture->setPixmap(*pixMap);*/
+    i->crop(area);
+    set_pictures_to_full_size();
 
 }
 

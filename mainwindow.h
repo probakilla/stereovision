@@ -19,6 +19,7 @@
 #include <QVBoxLayout>
 
 #include <dynamicframe.h>
+#include <imageprocessor.h>
 
 #include <sstream>
 
@@ -47,6 +48,7 @@ private:
     QPixmap *pixMap;
     QLabel *picture;
     DynamicFrame* dFrame;
+    imageprocessor *i;
 
     QPixmap *pixMapDivided;
     QLabel *divided;
