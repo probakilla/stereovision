@@ -62,8 +62,8 @@ void MainWindow::set_pictures_to_full_size()
 {
     if( pixMap && picture && !pixMap->isNull())
     {
-            picture->setPixmap( pixMap->scaled(this->width(),this->height(), Qt::KeepAspectRatio));
-            i->imageResize(this->width(), this->height());
+            picture->setPixmap( pixMap->scaled(centralWidget()->width(),centralWidget()->height(), Qt::KeepAspectRatio));
+            i->imageResize(centralWidget()->width(), centralWidget()->height());
             picture->adjustSize();
     }
 }
@@ -86,6 +86,8 @@ void MainWindow::openFile()
     *pixMap = QPixmap::fromImage(image);
 
     set_pictures_to_full_size();
+
+    dFrame->setSubRect(picture->rect());
 }
 
 void MainWindow::saveName()

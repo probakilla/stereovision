@@ -5,8 +5,7 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
 {
     setMouseTracking(true);
     setAutoFillBackground(true);
-    //subArea = QRect(0,0,size().width(), size().height());
-    subArea = QRect(100,100,300, 300);
+
     tlc = new MovableButton(this,sizeCorners);
         tlc->hide();
     trc = new MovableButton(this,sizeCorners);
@@ -27,6 +26,7 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
 void DynamicFrame::setSubRect( QRect area )
 {
     subArea = area;
+    subArea.setWidth(subArea.width()/2);
 }
 
 void DynamicFrame::launch()
