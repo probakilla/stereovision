@@ -20,6 +20,8 @@ class DynamicFrame : public QWidget
 
 public:
     DynamicFrame( QWidget *parent = nullptr, int sizeCorners = 30 );
+    void setSubRect( QRect area );
+
     enum class Action{ stopped, following, cropping, recropping };
 
 protected:
@@ -38,8 +40,10 @@ signals:
 private:
     void moveCorners( QPoint pos );
     void setSelectionRectangle();
+    void moveCornerInSubArea(MovableButton* c);
 
     int sizeCorner;
+    QRect subArea;
 
     MovableButton* tlc;
     MovableButton* trc;

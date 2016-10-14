@@ -5,7 +5,8 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
 {
     setMouseTracking(true);
     setAutoFillBackground(true);
-
+    //subArea = QRect(0,0,size().width(), size().height());
+    subArea = QRect(100,100,300, 300);
     tlc = new MovableButton(this,sizeCorners);
         tlc->hide();
     trc = new MovableButton(this,sizeCorners);
@@ -21,6 +22,11 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
     rect->setGraphicsEffect(e);
     rect->resize(sizeCorners,sizeCorners);
     rect->hide();
+}
+
+void DynamicFrame::setSubRect( QRect area )
+{
+    subArea = area;
 }
 
 void DynamicFrame::launch()
@@ -59,6 +65,23 @@ void DynamicFrame::moveCorners(QPoint pos)
         blc->move(blc->x(),pos.y());
         trc->move(pos.x(), trc->y());
     }
+
+    moveCornerInSubArea(tlc);
+    moveCornerInSubArea(trc);
+    moveCornerInSubArea(blc);
+    moveCornerInSubArea(brc);
+}
+
+void DynamicFrame::moveCornerInSubArea(MovableButton* c)
+{
+    if( c->x() < subArea.x())
+        c->move(subArea.x(), c->y());
+    if( c->x()+sizeCorner > subArea.x() + subArea.width())
+        c->move(subArea.x() + subArea.width() - sizeCorner, c->y());
+    if( c->y() < subArea.y())
+        c->move(c->x(),subArea.y());
+    if( c->y()+sizeCorner > subArea.y() + subArea.height())
+        c->move(c->x(), subArea.y() + subArea.height() - sizeCorner);
 }
 
 void DynamicFrame::setSelectionRectangle()
