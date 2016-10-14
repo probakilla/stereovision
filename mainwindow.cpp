@@ -82,8 +82,8 @@ void MainWindow::openFile()
     QImageReader reader(path);
     QImage image = reader.read();
     i = new imageprocessor(image);
+    //i->affichage(label);
     *pixMap = QPixmap::fromImage(image);
-
 
     set_pictures_to_full_size();
 }
@@ -92,25 +92,14 @@ void MainWindow::saveName()
 {
     if( pixMap && picture && !pixMap->isNull())
     {
-        pixMap->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)"));
+        pixMap->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString("image.png"), "Images (*.png *.gif *.jpg *.jpeg)"));
     }
 }
 
 void MainWindow::crop( QRect area)
 {
-    /*std::stringstream ss;
-    ss << "x: " << area.x() << std::endl;
-    ss << "y: " << area.y() << std::endl;
-    ss << "w: " << area.width() << std::endl;
-    ss << "h: " << area.height() << std::endl;
-
-    QMessageBox msgBox;
-    msgBox.setText(QString::fromStdString(ss.str()));
-    msgBox.exec();
-
-    *pixMap = pixMap->copy(area);
-    picture->setPixmap(*pixMap);*/
     i->crop(area);
+    i->display();
     set_pictures_to_full_size();
 
 }
