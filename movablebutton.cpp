@@ -9,6 +9,7 @@ void MovableButton::setMoving(bool value)  { moving = value;   }
 bool MovableButton::isMoving()             {return moving;     }
 void MovableButton::mousePressEvent(QMouseEvent * event)    { event->pos(); moving = true;  }
 void MovableButton::mouseReleaseEvent(QMouseEvent * event)  { event->pos(); moving = false; }
+/*Paint square frame*/
 void MovableButton::paintEvent(QPaintEvent *)
 {
     QPainter p(this);

@@ -14,6 +14,9 @@
 
 #include <movablebutton.h>
 
+/**
+ * @brief The DynamicFrame class is a widget with 4 buttons defining a resizable square area
+ */
 class DynamicFrame : public QWidget
 {
     Q_OBJECT
@@ -21,8 +24,6 @@ class DynamicFrame : public QWidget
 public:
     DynamicFrame( QWidget *parent = nullptr, int sizeCorners = 30 );
     void setSubRect( QRect area );
-
-    enum class Action{ stopped, following, cropping, recropping };
 
 protected:
     virtual void resizeEvent( QResizeEvent *event );
@@ -38,6 +39,7 @@ signals:
     void cropped(QRect area);
 
 private:
+    enum class Action{ stopped, following, cropping, recropping };
     void moveCorners( QPoint pos );
     void setSelectionRectangle();
     void moveCornerInSubArea(MovableButton* c);

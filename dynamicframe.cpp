@@ -23,12 +23,19 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
     rect->hide();
 }
 
+/**
+ * @brief DynamicFrame::setSubRect confine the dynamic frame to an area of the screen
+ * @param area
+ */
 void DynamicFrame::setSubRect( QRect area )
 {
     subArea = area;
     subArea.setWidth(subArea.width()/2);
 }
 
+/**
+ * @brief DynamicFrame::launch start the cropping action
+ */
 void DynamicFrame::launch()
 {
     state = Action::following;
@@ -72,6 +79,10 @@ void DynamicFrame::moveCorners(QPoint pos)
     moveCornerInSubArea(brc);
 }
 
+/**
+ * @brief DynamicFrame::moveCornerInSubArea moves the corner c if it is out of the confinemant area
+ * @param c
+ */
 void DynamicFrame::moveCornerInSubArea(MovableButton* c)
 {
     if( c->x() < subArea.x())
@@ -84,6 +95,9 @@ void DynamicFrame::moveCornerInSubArea(MovableButton* c)
         c->move(c->x(), subArea.y() + subArea.height() - sizeCorner);
 }
 
+/**
+ * @brief DynamicFrame::setSelectionRectangle set the position and size of the frame linking the 4 corners on the screen
+ */
 void DynamicFrame::setSelectionRectangle()
 {
     int x = (tlc->x() < trc->x() ? tlc->x() : trc->x());
@@ -96,17 +110,18 @@ void DynamicFrame::setSelectionRectangle()
 
 void DynamicFrame::mouseMoveEvent(QMouseEvent * event)
 {
+    /*updates the position of the corners and the frame when the mouse is moving and the widget is cropping*/
     if( state == Action::cropping || state == Action::recropping)
     {
         moveCorners(event->pos() - QPoint(sizeCorner,sizeCorner)/2);
         setSelectionRectangle();
     }
 }
-
 void DynamicFrame::mousePressEvent(QMouseEvent *event)
 {
     QWidget::mousePressEvent(event);
 
+    /*show and place the corners when the user make a first click during a crop*/
     if( state == Action::following)
     {
         tlc->move(event->pos());
@@ -127,6 +142,7 @@ void DynamicFrame::mousePressEvent(QMouseEvent *event)
 void DynamicFrame::mouseReleaseEvent(QMouseEvent *event)
 {
     QWidget::mouseReleaseEvent(event);
+    /*When the mouse is released, it change the state of the widget and take keyboard inputs to validate the crop*/
     if(state == Action::cropping)
     {
         brc->setMoving(false);
@@ -137,6 +153,7 @@ void DynamicFrame::mouseReleaseEvent(QMouseEvent *event)
 
 void DynamicFrame::keyPressEvent ( QKeyEvent * event )
 {
+    /*When the user press enter the widget reset and a cropped signal is emmited*/
     QWidget::keyPressEvent( event );
     if( (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) && state == Action::recropping)
     {
