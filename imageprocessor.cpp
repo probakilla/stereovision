@@ -4,8 +4,8 @@
 
 imageprocessor::imageprocessor(QImage image)
 {
-    _is_valid = false;
     _image = image;
+    _is_cropped = false;
 }
 
 
@@ -36,16 +36,20 @@ QImage imageprocessor::image() const
     return _image;
 }
 
-bool imageprocessor::is_valid() const
+QPushButton *imageprocessor::getB_valider() const
 {
-    return _is_valid;
+    return _b_valider;
 }
 
 void imageprocessor::validate()
 {
-
+    _is_cropped = true;
 }
 
+bool imageprocessor::getIs_cropped() const
+{
+    return _is_cropped;
+}
 
 void imageprocessor::display()
 {
@@ -57,14 +61,14 @@ void imageprocessor::display()
     _cropedImage->show();
 
 
-    QPushButton *b_valider = new QPushButton("Enregistrer");
-    connect(b_valider, SIGNAL(clicked()), this, SLOT(validate()));
-    connect(b_valider, SIGNAL(clicked()), this, SLOT(close()));
+    _b_valider = new QPushButton("Valider");
+    connect(_b_valider, SIGNAL(clicked()), this, SLOT(validate()));
+    connect(_b_valider, SIGNAL(clicked()), this, SLOT(close()));
     QPushButton *b_cancel = new QPushButton("Annuler");
     connect(b_cancel, SIGNAL(clicked()), this, SLOT(close()));
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout->addWidget(b_valider);
+    buttonLayout->addWidget(_b_valider);
     buttonLayout->addWidget(b_cancel);
     QVBoxLayout *primeLayout = new QVBoxLayout;
     primeLayout->addWidget(widget);

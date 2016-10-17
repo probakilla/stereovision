@@ -27,16 +27,19 @@ public:
 
     QImage image() const;
 
-    bool is_valid() const;
+
+    QPushButton *getB_valider() const;
+
+    bool getIs_cropped() const;
 
 public slots:
     void validate();
 
 
-
 private:
     QImage _image;
-    bool _is_valid;
+    QPushButton *_b_valider;
+    bool _is_cropped;
 };
 
 #endif // IMAGEPROCESSOR_H

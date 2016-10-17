@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
         actionCrop->setShortcut(tr("Ctrl+K"));
         connect(actionCrop, SIGNAL(triggered()), dFrame, SLOT(launch()));
     toolBar->addAction(actionCrop);
+
+
 }
 
 
@@ -100,9 +102,17 @@ void MainWindow::saveName()
 
 void MainWindow::crop( QRect area)
 {
-    i->crop(area);
-    i->display();
-    set_pictures_to_full_size();
+    if(i->getIs_cropped() == false)
+    {
+        i->crop(area);
+        i->display();
+        connect(i->getB_valider(), SIGNAL(clicked()), this, SLOT(dispCrop()));
+        set_pictures_to_full_size();
+    }
+    else
+    {
+        QMessageBox::warning(this, "Attention", QString::fromUtf8("Cette image a déjà été croppée"));
+    }
 
 }
 
@@ -118,4 +128,10 @@ void MainWindow::diviserImageEnDeux(){
         divided->move(pixMap->width()+5, 0);
         divided->show();
     }
+}
+
+void MainWindow::dispCrop()
+{
+    *pixMap = QPixmap::fromImage(i->image());
+    set_pictures_to_full_size();
 }
