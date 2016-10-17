@@ -25,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
+    QAction* actionSaveName = menuFile->addAction("&Enregistrer sous");
+        actionSaveName->setShortcut(tr("Ctrl+S"));
+        connect(actionSaveName, SIGNAL(triggered()), this, SLOT(saveName()));
     QAction* actionQuit = menuFile->addAction("Quitter");
         actionQuit->setShortcut(tr("Ctrl+Q"));
         connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -32,8 +35,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
         actionAbout->setShortcut(tr("Ctrl+H"));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
 
-    QAction* actionSaveName = menuFile->addAction("&Enregistrer sous");
-        connect(actionSaveName, SIGNAL(triggered()), this, SLOT(saveName()));
+
 
     // Création de la barre d'outils
     QToolBar *toolBar = addToolBar("Tools");
