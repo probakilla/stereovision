@@ -52,7 +52,7 @@ private:
     imageprocessor *i;
 
     QPixmap *pixMapDivided;
-    QLabel *divided;
+    QLabel *pictureDivided;
 };
 
 #endif // MAINWINDOW_H
