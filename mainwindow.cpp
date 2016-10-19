@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     picture = new QLabel(widget);
     pixMap = new QPixmap();
 
+    pixMapDivided = new QPixmap();
+    pictureDivided = new QLabel(widget);
+
     dFrame = new DynamicFrame(widget);
     dFrame->setPalette(Qt::transparent);
     connect( dFrame, SIGNAL(cropped(QRect)), this, SLOT(crop(QRect)));
@@ -42,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
         signalMapper->setMapping(actionSaveName1, 1);
         connect(actionSaveName1, SIGNAL(triggered()), signalMapper, SLOT(map()));
 
-    // TO DO : Hide the menu when pixMapDivided is null.
+    //TODO : Hide the menu when pixMapDivided is null.
     QMenu* menuImage2 = menuBar()->addMenu("Image 2");
     QAction* actionSaveName2 = menuImage2->addAction("&Enregistrer sous");
         signalMapper->setMapping(actionSaveName2, 2);
@@ -79,11 +82,22 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::set_pictures_to_full_size()
 {
-    if( pixMap && picture && !pixMap->isNull())
+    if( pixMap && picture && !pixMap->isNull() && pixMapDivided->isNull())
     {
             picture->setPixmap( pixMap->scaled(centralWidget()->width(),centralWidget()->height(), Qt::KeepAspectRatio));
             i->imageResize(centralWidget()->width(), centralWidget()->height());
             picture->adjustSize();
+    }
+    else if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
+    {
+        picture->setPixmap( pixMap->scaled(centralWidget()->width(),centralWidget()->height(), Qt::KeepAspectRatio));
+        i->imageResize(centralWidget()->width(), centralWidget()->height());
+        picture->adjustSize();
+
+        pictureDivided->move(picture->width() +2, 0);
+        pictureDivided->setPixmap(pixMapDivided->scaled((centralWidget()->width()/2)-1, centralWidget()->height(), Qt::KeepAspectRatio));
+        i->imageResize(centralWidget()->width()/2, centralWidget()->height());
+        pictureDivided->adjustSize();
     }
 }
 
@@ -146,14 +160,14 @@ void MainWindow::crop( QRect area)
 void MainWindow::diviserImageEnDeux(){
     if( pixMap && picture && !pixMap->isNull())
     {
-        pixMapDivided = new QPixmap();
        *pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
        *pixMap = pixMap->copy(0, 0, pixMap->width()/2, pixMap->height());
         picture->setPixmap(*pixMap);
-        divided = new QLabel(widget);
-        divided->setPixmap(*pixMapDivided);
-        divided->move(pixMap->width()+5, 0);
-        divided->show();
+        pictureDivided->setPixmap(*pixMapDivided);
+        pictureDivided->move(pixMap->width()+5, 0);
+        pictureDivided->show();
+
+        set_pictures_to_full_size();
     }
 }
 
