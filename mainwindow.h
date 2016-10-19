@@ -17,6 +17,7 @@
 #include <QRect>
 #include <QToolBar>
 #include <QVBoxLayout>
+#include <QSignalMapper>
 
 #include <dynamicframe.h>
 #include <imageprocessor.h>
@@ -36,7 +37,7 @@ public:
 public slots:
     void msgBoxAbout();
     void openFile();
-    void saveName();
+    void saveName(int pix);
     void crop( QRect area);
     void diviserImageEnDeux();
 

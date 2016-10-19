@@ -25,9 +25,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
-    QAction* actionSaveName = menuFile->addAction("&Enregistrer sous");
+    /*QAction* actionSaveName = menuFile->addAction("&Enregistrer sous");
         actionSaveName->setShortcut(tr("Ctrl+S"));
-        connect(actionSaveName, SIGNAL(triggered()), this, SLOT(saveName()));
+        connect(actionSaveName, SIGNAL(triggered()), this, SLOT(saveName()));*/
     QAction* actionQuit = menuFile->addAction("Quitter");
         actionQuit->setShortcut(tr("Ctrl+Q"));
         connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -35,6 +35,21 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
         actionAbout->setShortcut(tr("Ctrl+H"));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(msgBoxAbout()));
 
+    //TODO : Replace the int in the signalMapper by the pixmap/pixmapdivided
+    QSignalMapper *signalMapper = new QSignalMapper(widget);
+    QMenu* menuImage1 = menuBar()->addMenu("&Image 1");
+    QAction* actionSaveName1 = menuImage1->addAction("&Enregistrer sous");
+        signalMapper->setMapping(actionSaveName1, 1);
+        connect(actionSaveName1, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    // TO DO : Hide the menu when pixMapDivided is null.
+    QMenu* menuImage2 = menuBar()->addMenu("Image 2");
+    QAction* actionSaveName2 = menuImage2->addAction("&Enregistrer sous");
+        signalMapper->setMapping(actionSaveName2, 2);
+        connect(actionSaveName2, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    //menuImage2->hide(); doesn't work.
+
+        connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(saveName(int)));
 
 
     // Création de la barre d'outils
@@ -86,19 +101,31 @@ void MainWindow::openFile()
     QImageReader reader(path);
     QImage image = reader.read();
     i = new imageprocessor(image);
+    //i->affichage(label);
     *pixMap = QPixmap::fromImage(image);
+
+    if(!pixMapDivided->isNull()){
+        *pixMapDivided = NULL;
+        pictureDivided->clear();
+    }
 
     set_pictures_to_full_size();
 
     dFrame->setSubRect(picture->rect());
 }
 
-void MainWindow::saveName()
+// TODO : Improve the function so that it takes the pixmap to save as a parameter.
+void MainWindow::saveName(int pix)
 {
-    if( pixMap && picture && !pixMap->isNull())
+    if( pix == 1 && !pixMap->isNull())
     {
-        pixMap->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString("image.png"), "Images (*.png *.gif *.jpg *.jpeg)"));
+        pixMap->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)"));
     }
+    if( pix == 2 && !pixMapDivided->isNull())
+    {
+        pixMapDivided->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)"));
+    }
+
 }
 
 void MainWindow::crop( QRect area)
