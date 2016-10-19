@@ -31,6 +31,11 @@ void imageprocessor::crop(const QRect & rect)
         _image = tmp->copy();
 }
 
+QImage imageprocessor::cvMatToQImage(const cv::Mat &src, QImage::Format format)
+{
+    return QImage(src.data, src.cols, src.rows, src.step, format).copy();
+}
+
 QImage imageprocessor::image() const
 {
     return _image;
