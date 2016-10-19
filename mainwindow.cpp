@@ -86,7 +86,6 @@ void MainWindow::openFile()
     QImageReader reader(path);
     QImage image = reader.read();
     i = new imageprocessor(image);
-    //i->affichage(label);
     *pixMap = QPixmap::fromImage(image);
 
     set_pictures_to_full_size();
@@ -107,8 +106,7 @@ void MainWindow::crop( QRect area)
     if(i->getIs_cropped() == false)
     {
         i->crop(area);
-        i->display();
-        connect(i->getB_valider(), SIGNAL(clicked()), this, SLOT(dispCrop()));
+        *pixMap = QPixmap::fromImage(i->image());
         set_pictures_to_full_size();
     }
     else
@@ -132,8 +130,3 @@ void MainWindow::diviserImageEnDeux(){
     }
 }
 
-void MainWindow::dispCrop()
-{
-    *pixMap = QPixmap::fromImage(i->image());
-    set_pictures_to_full_size();
-}

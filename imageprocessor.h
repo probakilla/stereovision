@@ -22,12 +22,10 @@ class imageprocessor: public QWidget
     Q_OBJECT
 public:
     imageprocessor(QImage image);
-    void display();
     void imageResize(const int & width,const int & height);
     void crop(const QRect & rect);
     QImage cvMatToQImage(const cv::Mat & src, QImage::Format format);
     QImage image() const;
-    QPushButton *getB_valider() const;
     bool getIs_cropped() const;
 
 public slots:
@@ -36,7 +34,6 @@ public slots:
 
 private:
     QImage _image;
-    QPushButton *_b_valider;
     bool _is_cropped;
 };
 
