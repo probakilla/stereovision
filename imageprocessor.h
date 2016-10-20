@@ -21,26 +21,22 @@ class imageprocessor: public QWidget
 {
     Q_OBJECT
 public:
-    imageprocessor(const QImage & image);
+    imageprocessor(const QImage & getImage);
     void imageResize(const int & width,const int & height);
     void crop(const QRect & rect);
     QImage cvMatToQimage(const cv::Mat & src);
-    QImage image() const;
+    QImage getImage() const;
 
-    cv::Mat qimageToCvMat (const QImage & image);
+    cv::Mat qimageToCvMat (const QImage & getImage);
     bool getIsCroped() const;
     //QImage imageprocessor::blur(QImage img);
 
-    QImage getImageBlurred() const;
-
-public slots:
-    void validate();
-
+    QImage getProcessedImage () const;
 
 private:
     QImage _image;
-    QImage _image_blurred;
-    bool _is_cropped;
+    QImage _processed_image;
+    bool _is_croped;
 };
 
 #endif // IMAGEPROCESSOR_H

@@ -147,7 +147,7 @@ void MainWindow::crop( QRect area)
     if(i->getIsCroped() == false)
     {
         i->crop(area);
-        *pixMap = QPixmap::fromImage(i->image());
+        *pixMap = QPixmap::fromImage(i->getImage());
         set_pictures_to_full_size();
     }
     else
@@ -164,6 +164,26 @@ void MainWindow::splitImageInHalf(){
        *pixMap = pixMap->copy(0, 0, pixMap->width()/2, pixMap->height());
         picture->setPixmap(*pixMap);
         pictureDivided->setPixmap(*pixMapDivided);
+        pictureDivided->move(pixMap->width()+5, 0);
+        pictureDivided->show();
+
+        set_pictures_to_full_size();
+    }
+}
+
+void MainWindow::blur()
+{
+    //i->blur();
+}
+
+void MainWindow::dispBlurredImage()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+       *pixMapDivided = pixMap->copy(pixMap->width(), 0, pixMap->width(), pixMap->height());
+       *pixMap = pixMap->copy(0, 0, pixMap->width(), pixMap->height());
+        picture->setPixmap(QPixmap::fromImage(i->getImage()));
+        pictureDivided->setPixmap(QPixmap::fromImage(i->getProcessedImage()));
         pictureDivided->move(pixMap->width()+5, 0);
         pictureDivided->show();
 

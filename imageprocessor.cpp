@@ -2,12 +2,12 @@
 
 #include <QImage>
 
-imageprocessor::imageprocessor(const QImage & image) : _image(image), _image_blurred{}, _is_cropped(false) {}
+imageprocessor::imageprocessor(const QImage & image) : _image{image}, _processed_image{image}, _is_croped{false} {}
 
 
 void imageprocessor::crop(const QRect & rect)
 {
-        _is_cropped = true;
+        _is_croped = true;
         QImage* tmp = new QImage ((rect.width() * 2), rect.height(), _image.format());
 
         int top_y = rect.topLeft().y();
@@ -25,7 +25,7 @@ void imageprocessor::crop(const QRect & rect)
             for (int x = 0; x < (tmp->width() / 2); ++x)
                 tmp->setPixel(x + (tmp->width() / 2), y, _image.pixel(x + top_middle_x, y + top_y));
 
-        _image = tmp->copy();
+        _processed_image = tmp->copy();
 }
 
 QImage imageprocessor::cvMatToQimage(const cv::Mat &src)
@@ -39,24 +39,19 @@ cv::Mat imageprocessor::qimageToCvMat(const QImage &image)
 }
 
 
-QImage imageprocessor::image() const
+QImage imageprocessor::getImage() const
 {
     return _image;
 }
 
-void imageprocessor::validate()
-{
-    _is_cropped = true;
-}
-
-QImage imageprocessor::getImageBlurred() const
-{
-    return _image_blurred;
-}
-
 bool imageprocessor::getIsCroped() const
 {
-    return _is_cropped;
+    return _is_croped;
+}
+
+QImage imageprocessor::getProcessedImage() const
+{
+    return _processed_image;
 }
 
 void imageprocessor::imageResize(const int & width,const int & height)
@@ -65,8 +60,9 @@ void imageprocessor::imageResize(const int & width,const int & height)
 }
 
 /*  A EFFACER UNE FOIS LU
- *  Je ne modifie rien pour l'instant mais il faudrait que tu mette le résultat de cette fonction dans la donnée membre _image_blurred
+ *  Je ne modifie rien pour l'instant mais il faudrait que tu mette le résultat de cette fonction dans la donnée membre _processed_image
  *  (donc ta méthode devient void) pour faciliter l'exercie 3 (afficher l'image plus celle floutée à coté)
+ *  Et pour ta fonction je ne pense pas que tu ai besoin de paramètres, prend direct la donnée membre _image sans la modifiée.
  */
 /*QImage imageprocessor::blur(QImage img)
 {
