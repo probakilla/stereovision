@@ -31,12 +31,15 @@ public:
     bool getIsCroped() const;
     //QImage imageprocessor::blur(QImage img);
 
+    QImage getImageBlurred() const;
+
 public slots:
     void validate();
 
 
 private:
     QImage _image;
+    QImage _image_blurred;
     bool _is_cropped;
 };
 

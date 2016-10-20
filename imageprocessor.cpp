@@ -2,7 +2,7 @@
 
 #include <QImage>
 
-imageprocessor::imageprocessor(const QImage & image) : _image(image), _is_cropped(false) {}
+imageprocessor::imageprocessor(const QImage & image) : _image(image), _image_blurred{}, _is_cropped(false) {}
 
 
 void imageprocessor::crop(const QRect & rect)
@@ -49,6 +49,11 @@ void imageprocessor::validate()
     _is_cropped = true;
 }
 
+QImage imageprocessor::getImageBlurred() const
+{
+    return _image_blurred;
+}
+
 bool imageprocessor::getIsCroped() const
 {
     return _is_cropped;
@@ -59,6 +64,10 @@ void imageprocessor::imageResize(const int & width,const int & height)
     _image = _image.scaled(width, height, Qt::KeepAspectRatio);
 }
 
+/*  A EFFACER UNE FOIS LU
+ *  Je ne modifie rien pour l'instant mais il faudrait que tu mette le résultat de cette fonction dans la donnée membre _image_blurred
+ *  (donc ta méthode devient void) pour faciliter l'exercie 3 (afficher l'image plus celle floutée à coté)
+ */
 /*QImage imageprocessor::blur(QImage img)
 {
     cv::Mat imgMat;
