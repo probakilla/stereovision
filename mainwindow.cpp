@@ -176,22 +176,20 @@ void MainWindow::splitImageInHalf(){
 
 void MainWindow::blur()
 {
+    if( pixMap && picture && !pixMap->isNull())
+    {
     i->blur();
     this->dispBlurredImage();
+    }
 }
 
 void MainWindow::dispBlurredImage()
 {
-    if( pixMap && picture && !pixMap->isNull())
-    {
-       *pixMapDivided = pixMap->copy(pixMap->width(), 0, pixMap->width(), pixMap->height());
-       *pixMap = pixMap->copy(0, 0, pixMap->width(), pixMap->height());
-        picture->setPixmap(QPixmap::fromImage(i->getImage()));
-        pictureDivided->setPixmap(QPixmap::fromImage(i->getProcessedImage()));
-        pictureDivided->move(pixMap->width()+5, 0);
-        pictureDivided->show();
+    *pixMapDivided = QPixmap::fromImage(i->getProcessedImage());
+    pictureDivided->setPixmap(*pixMapDivided);
+    pictureDivided->move(pixMap->width()+5, 0);
+    pictureDivided->show();
 
-        set_pictures_to_full_size();
-    }
+    set_pictures_to_full_size();
 }
 

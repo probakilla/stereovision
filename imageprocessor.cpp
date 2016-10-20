@@ -66,5 +66,6 @@ void imageprocessor::blur()
     //The strength of the blur is determined by the cv::Size(w, h)
     cv::blur(imageprocessor::qimageToCvMat(getImage()), dest, cv::Size(5, 5));
     cv::imshow("Aperçu du flou", dest);
-    _processed_image = cvMatToQimage(dest);
+    cv::waitKey();
+    _processed_image = imageprocessor::cvMatToQimage(dest);
 }
