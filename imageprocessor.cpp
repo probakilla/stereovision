@@ -58,3 +58,13 @@ void imageprocessor::imageResize(const int & width,const int & height)
 {
     _image = _image.scaled(width, height, Qt::KeepAspectRatio);
 }
+
+/*QImage imageprocessor::blur(QImage img)
+{
+    cv::Mat imgMat;
+    cv::Mat imgDst;
+    //imgMat = qImageToCvMat();
+    cv::blur(imgMat, imgDst, 1);
+    cv::imshow("Aperçu du flou", imgDst);
+    QImage ret = cvMatToQImage(&imgDst, ?)
+}*/

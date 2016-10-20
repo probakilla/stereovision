@@ -39,7 +39,7 @@ public slots:
     void openFile();
     void saveName(int pix);
     void crop( QRect area);
-    void diviserImageEnDeux();
+    void splitImageInHalf();
 
 private:
     void set_pictures_to_full_size();

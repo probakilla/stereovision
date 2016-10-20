@@ -26,8 +26,11 @@ public:
     void crop(const QRect & rect);
     QImage cvMatToQimage(const cv::Mat & src);
     QImage image() const;
-    bool getIsCroped() const;
+
     cv::Mat qimageToCvMat (const QImage & image);
+    bool getIs_cropped() const;
+    //QImage imageprocessor::blur(QImage img);
+
 public slots:
     void validate();
 
