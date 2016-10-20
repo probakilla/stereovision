@@ -25,6 +25,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
         actionDivision->setShortcut(tr("Ctrl+D"));
         connect(actionDivision, SIGNAL(triggered()), this, SLOT(splitImageInHalf()));
+     QAction *actionBlur = menuEdition->addAction("Flouter l'image");
+        actionBlur->setShortcut(tr("Ctrl+F"));
+        connect(actionBlur, SIGNAL(triggered()), this, SLOT(blur()));
+
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
@@ -96,7 +100,6 @@ void MainWindow::set_pictures_to_full_size()
 
         pictureDivided->move(picture->width() +2, 0);
         pictureDivided->setPixmap(pixMapDivided->scaled((centralWidget()->width()/2)-1, centralWidget()->height(), Qt::KeepAspectRatio));
-        i->imageResize(centralWidget()->width()/2, centralWidget()->height());
         pictureDivided->adjustSize();
     }
 }
@@ -133,11 +136,11 @@ void MainWindow::saveName(int pix)
 {
     if( pix == 1 && !pixMap->isNull())
     {
-        pixMap->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)"));
+        pixMap->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString("image.png"), "Images (*.png *.gif *.jpg *.jpeg)"));
     }
     if( pix == 2 && !pixMapDivided->isNull())
     {
-        pixMapDivided->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString(), "Images (*.png *.gif *.jpg *.jpeg)"));
+        pixMapDivided->save(QFileDialog::getSaveFileName(this, "Enregistrer un fichier", QString("image.png"), "Images (*.png *.gif *.jpg *.jpeg)"));
     }
 
 }
@@ -147,7 +150,7 @@ void MainWindow::crop( QRect area)
     if(i->getIsCroped() == false)
     {
         i->crop(area);
-        *pixMap = QPixmap::fromImage(i->getImage());
+        *pixMap = QPixmap::fromImage(i->getProcessedImage());
         set_pictures_to_full_size();
     }
     else
@@ -174,6 +177,7 @@ void MainWindow::splitImageInHalf(){
 void MainWindow::blur()
 {
     //i->blur();
+    this->dispBlurredImage();
 }
 
 void MainWindow::dispBlurredImage()
