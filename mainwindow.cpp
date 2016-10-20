@@ -176,7 +176,7 @@ void MainWindow::splitImageInHalf(){
 
 void MainWindow::blur()
 {
-    //i->blur();
+    i->blur();
     this->dispBlurredImage();
 }
 
