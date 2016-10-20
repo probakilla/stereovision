@@ -75,6 +75,7 @@ void imageprocessor::canny()
     cv::Mat dest;
     cv::Canny(imageprocessor::qimageToCvMat(getImage()), dest, 100, 200);
     cv::imshow("Aperçu de Canny", dest);
+    cv::waitKey();
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
@@ -83,5 +84,6 @@ void imageprocessor::sobel()
     cv::Mat dest;
     cv::Sobel(imageprocessor::qimageToCvMat(getImage()), dest, -1, 1, 0);
     cv::imshow("Aperçu de Sobel", dest);
+    cv::waitKey();
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
