@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QMenu* menuEdition = menuBar()->addMenu("&Edition");
     QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
         actionDivision->setShortcut(tr("Ctrl+D"));
-        connect(actionDivision, SIGNAL(triggered()), this, SLOT(diviserImageEnDeux()));
+        connect(actionDivision, SIGNAL(triggered()), this, SLOT(splitImageInHalf()));
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
@@ -157,7 +157,7 @@ void MainWindow::crop( QRect area)
 
 }
 
-void MainWindow::diviserImageEnDeux(){
+void MainWindow::splitImageInHalf(){
     if( pixMap && picture && !pixMap->isNull())
     {
        *pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
