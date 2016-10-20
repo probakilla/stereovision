@@ -27,6 +27,7 @@ public:
     QImage cvMatToQImage(const cv::Mat & src, QImage::Format format);
     QImage image() const;
     bool getIs_cropped() const;
+    //QImage imageprocessor::blur(QImage img);
 
 public slots:
     void validate();
