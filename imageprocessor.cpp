@@ -73,9 +73,15 @@ void imageprocessor::blur()
 void imageprocessor::canny()
 {
     cv::Mat dest;
-    //double threshold_high = cv::threshold(imageprocessor::qimageToCvMat(getImage()), dest, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-    //double threshold_low = cv::threshold(imageprocessor::qimageToCvMat(getImage()), dest, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU) * 0.5;
     cv::Canny(imageprocessor::qimageToCvMat(getImage()), dest, 100, 200);
     cv::imshow("Aperçu de Canny", dest);
+    _processed_image = imageprocessor::cvMatToQimage(dest);
+}
+
+void imageprocessor::sobel()
+{
+    cv::Mat dest;
+    cv::Sobel(imageprocessor::qimageToCvMat(getImage()), dest, -1, 1, 0);
+    cv::imshow("Aperçu de Sobel", dest);
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }

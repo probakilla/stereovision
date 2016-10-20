@@ -43,6 +43,7 @@ public slots:
     void splitImageInHalf();
     void blur();
     void canny();
+    void sobel();
 
 private:
     void set_pictures_to_full_size();

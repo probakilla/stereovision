@@ -32,6 +32,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionCanny = menuEdition->addAction("Canny");
         actionCanny->setShortcut(tr("Ctrl+C"));
         connect(actionCanny, SIGNAL(triggered()), this, SLOT(canny()));
+    QAction* actionSobel = menuEdition->addAction("Sobel");
+        actionSobel->setShortcut(tr("Ctrl+B"));
+        connect(actionSobel, SIGNAL(triggered()), this, SLOT(sobel()));
 
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
@@ -192,6 +195,15 @@ void MainWindow::canny()
     if( pixMap && picture && !pixMap->isNull())
     {
         i->canny();
+        this->dispProcessedImage();
+    }
+}
+
+void MainWindow::sobel()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        i->sobel();
         this->dispProcessedImage();
     }
 }

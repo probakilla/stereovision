@@ -31,6 +31,7 @@ public:
     bool getIsCroped() const;
     void blur();
     void canny();
+    void sobel();
 
     QImage getProcessedImage () const;
 
