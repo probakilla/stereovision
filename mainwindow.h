@@ -33,7 +33,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     virtual void resizeEvent(QResizeEvent *event);
-    void dispBlurredImage();
+    void dispProcessedImage();
 
 public slots:
     void msgBoxAbout();
@@ -42,7 +42,7 @@ public slots:
     void crop( QRect area);
     void splitImageInHalf();
     void blur();
-
+    void canny();
 
 private:
     void set_pictures_to_full_size();

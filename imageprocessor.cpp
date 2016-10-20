@@ -69,3 +69,13 @@ void imageprocessor::blur()
     cv::waitKey();
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
+
+void imageprocessor::canny()
+{
+    cv::Mat dest;
+    //double threshold_high = cv::threshold(imageprocessor::qimageToCvMat(getImage()), dest, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+    //double threshold_low = cv::threshold(imageprocessor::qimageToCvMat(getImage()), dest, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU) * 0.5;
+    cv::Canny(imageprocessor::qimageToCvMat(getImage()), dest, 100, 200);
+    cv::imshow("Aperçu de Canny", dest);
+    _processed_image = imageprocessor::cvMatToQimage(dest);
+}

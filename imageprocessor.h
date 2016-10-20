@@ -30,6 +30,7 @@ public:
     cv::Mat qimageToCvMat (const QImage & getImage);
     bool getIsCroped() const;
     void blur();
+    void canny();
 
     QImage getProcessedImage () const;
 

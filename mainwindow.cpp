@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
 
     QMenu* menuFile = menuBar()->addMenu("&Fichier");
     QAction* actionOpenFile = menuFile->addAction("Ouvrir");
+
     QMenu* menuEdition = menuBar()->addMenu("&Edition");
     QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
         actionDivision->setShortcut(tr("Ctrl+D"));
@@ -28,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
      QAction *actionBlur = menuEdition->addAction("Flouter l'image");
         actionBlur->setShortcut(tr("Ctrl+F"));
         connect(actionBlur, SIGNAL(triggered()), this, SLOT(blur()));
+    QAction* actionCanny = menuEdition->addAction("Canny");
+        actionCanny->setShortcut(tr("Ctrl+C"));
+        connect(actionCanny, SIGNAL(triggered()), this, SLOT(canny()));
 
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
@@ -178,12 +182,21 @@ void MainWindow::blur()
 {
     if( pixMap && picture && !pixMap->isNull())
     {
-    i->blur();
-    this->dispBlurredImage();
+        i->blur();
+        this->dispProcessedImage();
     }
 }
 
-void MainWindow::dispBlurredImage()
+void MainWindow::canny()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        i->canny();
+        this->dispProcessedImage();
+    }
+}
+
+void MainWindow::dispProcessedImage()
 {
     *pixMapDivided = QPixmap::fromImage(i->getProcessedImage());
     pictureDivided->setPixmap(*pixMapDivided);
