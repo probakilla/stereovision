@@ -144,7 +144,7 @@ void MainWindow::saveName(int pix)
 
 void MainWindow::crop( QRect area)
 {
-    if(i->getIs_cropped() == false)
+    if(i->getIsCroped() == false)
     {
         i->crop(area);
         *pixMap = QPixmap::fromImage(i->image());

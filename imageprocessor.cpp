@@ -2,11 +2,7 @@
 
 #include <QImage>
 
-imageprocessor::imageprocessor(QImage image)
-{
-    _image = image;
-    _is_cropped = false;
-}
+imageprocessor::imageprocessor(const QImage & image) : _image(image), _is_cropped(false) {}
 
 
 void imageprocessor::crop(const QRect & rect)
@@ -32,10 +28,16 @@ void imageprocessor::crop(const QRect & rect)
         _image = tmp->copy();
 }
 
-QImage imageprocessor::cvMatToQImage(const cv::Mat &src, QImage::Format format)
+QImage imageprocessor::cvMatToQimage(const cv::Mat &src)
 {
-    return QImage(src.data, src.cols, src.rows, src.step, format).copy();
+    return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();
 }
+
+cv::Mat imageprocessor::qimageToCvMat(const QImage &image)
+{
+    return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone();
+}
+
 
 QImage imageprocessor::image() const
 {
@@ -47,7 +49,7 @@ void imageprocessor::validate()
     _is_cropped = true;
 }
 
-bool imageprocessor::getIs_cropped() const
+bool imageprocessor::getIsCroped() const
 {
     return _is_cropped;
 }

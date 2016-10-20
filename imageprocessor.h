@@ -21,13 +21,13 @@ class imageprocessor: public QWidget
 {
     Q_OBJECT
 public:
-    imageprocessor(QImage image);
+    imageprocessor(const QImage & image);
     void imageResize(const int & width,const int & height);
     void crop(const QRect & rect);
-    QImage cvMatToQImage(const cv::Mat & src, QImage::Format format);
+    QImage cvMatToQimage(const cv::Mat & src);
     QImage image() const;
-    bool getIs_cropped() const;
-
+    bool getIsCroped() const;
+    cv::Mat qimageToCvMat (const QImage & image);
 public slots:
     void validate();
 
