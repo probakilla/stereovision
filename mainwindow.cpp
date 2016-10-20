@@ -94,7 +94,7 @@ void MainWindow::set_pictures_to_full_size()
     }
     else if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        picture->setPixmap( pixMap->scaled(centralWidget()->width(),centralWidget()->height(), Qt::KeepAspectRatio));
+        picture->setPixmap( pixMap->scaled((centralWidget()->width()/2),centralWidget()->height(), Qt::KeepAspectRatio));
         i->imageResize(centralWidget()->width(), centralWidget()->height());
         picture->adjustSize();
 
