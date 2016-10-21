@@ -33,7 +33,7 @@ QImage imageprocessor::cvMatToQimage(const cv::Mat &src)
     return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();
 }
 
-cv::Mat imageprocessor::qimageToCvMat(const QImage &image)
+cv::Mat imageprocessor::qimageToCvMat(const QImage & image)
 {
     return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone();
 }
@@ -42,6 +42,11 @@ cv::Mat imageprocessor::qimageToCvMat(const QImage &image)
 QImage imageprocessor::getImage() const
 {
     return _image;
+}
+
+void imageprocessor::setImage(const QImage & image)
+{
+    _image = image.copy();
 }
 
 bool imageprocessor::getIsCroped() const

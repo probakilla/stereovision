@@ -26,6 +26,7 @@ public:
     void crop(const QRect & rect);
     QImage cvMatToQimage(const cv::Mat & src);
     QImage getImage() const;
+    void setImage(const QImage & image);
 
     cv::Mat qimageToCvMat (const QImage & getImage);
     bool getIsCroped() const;

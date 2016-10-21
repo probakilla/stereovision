@@ -125,7 +125,6 @@ void MainWindow::openFile()
     QImageReader reader(path);
     QImage image = reader.read();
     i = new imageprocessor(image);
-    //i->affichage(label);
     *pixMap = QPixmap::fromImage(image);
 
     if(!pixMapDivided->isNull()){
