@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
 
     QMenu* menuFile = menuBar()->addMenu("&Fichier");
     QAction* actionOpenFile = menuFile->addAction("Ouvrir");
+
     QMenu* menuEdition = menuBar()->addMenu("&Edition");
     QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
         actionDivision->setShortcut(tr("Ctrl+D"));
@@ -28,6 +29,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
      QAction *actionBlur = menuEdition->addAction("Flouter l'image");
         actionBlur->setShortcut(tr("Ctrl+F"));
         connect(actionBlur, SIGNAL(triggered()), this, SLOT(blur()));
+    QAction* actionCanny = menuEdition->addAction("Canny");
+        actionCanny->setShortcut(tr("Ctrl+C"));
+        connect(actionCanny, SIGNAL(triggered()), this, SLOT(canny()));
+    QAction* actionSobel = menuEdition->addAction("Sobel");
+        actionSobel->setShortcut(tr("Ctrl+B"));
+        connect(actionSobel, SIGNAL(triggered()), this, SLOT(sobel()));
 
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
@@ -176,22 +183,38 @@ void MainWindow::splitImageInHalf(){
 
 void MainWindow::blur()
 {
-    //i->blur();
-    this->dispBlurredImage();
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        i->blur();
+        this->dispProcessedImage();
+    }
 }
 
-void MainWindow::dispBlurredImage()
+void MainWindow::canny()
 {
     if( pixMap && picture && !pixMap->isNull())
     {
-       *pixMapDivided = pixMap->copy(pixMap->width(), 0, pixMap->width(), pixMap->height());
-       *pixMap = pixMap->copy(0, 0, pixMap->width(), pixMap->height());
-        picture->setPixmap(QPixmap::fromImage(i->getImage()));
-        pictureDivided->setPixmap(QPixmap::fromImage(i->getProcessedImage()));
-        pictureDivided->move(pixMap->width()+5, 0);
-        pictureDivided->show();
-
-        set_pictures_to_full_size();
+        i->canny();
+        this->dispProcessedImage();
     }
+}
+
+void MainWindow::sobel()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        i->sobel();
+        this->dispProcessedImage();
+    }
+}
+
+void MainWindow::dispProcessedImage()
+{
+    *pixMapDivided = QPixmap::fromImage(i->getProcessedImage());
+    pictureDivided->setPixmap(*pixMapDivided);
+    pictureDivided->move(pixMap->width()+5, 0);
+    pictureDivided->show();
+
+    set_pictures_to_full_size();
 }
 

@@ -59,17 +59,31 @@ void imageprocessor::imageResize(const int & width,const int & height)
     _image = _image.scaled(width, height, Qt::KeepAspectRatio);
 }
 
-/*  A EFFACER UNE FOIS LU
- *  Je ne modifie rien pour l'instant mais il faudrait que tu mette le résultat de cette fonction dans la donnée membre _processed_image
- *  (donc ta méthode devient void) pour faciliter l'exercie 3 (afficher l'image plus celle floutée à coté)
- *  Et pour ta fonction je ne pense pas que tu ai besoin de paramètres, prend direct la donnée membre _image sans la modifiée.
- */
-/*QImage imageprocessor::blur(QImage img)
+
+void imageprocessor::blur()
 {
-    cv::Mat imgMat;
-    cv::Mat imgDst;
-    //imgMat = qImageToCvMat();
-    cv::blur(imgMat, imgDst, 1);
-    cv::imshow("Aperçu du flou", imgDst);
-    QImage ret = cvMatToQImage(&imgDst, ?)
-}*/
+    cv::Mat dest;
+    //The strength of the blur is determined by the cv::Size(w, h)
+    cv::blur(imageprocessor::qimageToCvMat(getImage()), dest, cv::Size(5, 5));
+    cv::imshow("Aperçu du flou", dest);
+    cv::waitKey();
+    _processed_image = imageprocessor::cvMatToQimage(dest);
+}
+
+void imageprocessor::canny()
+{
+    cv::Mat dest;
+    cv::Canny(imageprocessor::qimageToCvMat(getImage()), dest, 100, 200);
+    cv::imshow("Aperçu de Canny", dest);
+    cv::waitKey();
+    _processed_image = imageprocessor::cvMatToQimage(dest);
+}
+
+void imageprocessor::sobel()
+{
+    cv::Mat dest;
+    cv::Sobel(imageprocessor::qimageToCvMat(getImage()), dest, -1, 1, 0);
+    cv::imshow("Aperçu de Sobel", dest);
+    cv::waitKey();
+    _processed_image = imageprocessor::cvMatToQimage(dest);
+}
