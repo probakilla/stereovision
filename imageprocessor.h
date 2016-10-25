@@ -27,6 +27,7 @@ public:
     QImage cvMatToQimage(const cv::Mat & src);
     QImage getImage() const;
     void setImage(const QImage & image);
+    void splitImage ();
 
     cv::Mat qimageToCvMat (const QImage & getImage);
     bool getIsCroped() const;

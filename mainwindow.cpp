@@ -175,6 +175,7 @@ void MainWindow::splitImageInHalf(){
         pictureDivided->setPixmap(*pixMapDivided);
         pictureDivided->move(pixMap->width()+5, 0);
         pictureDivided->show();
+        i->splitImage();
 
         set_pictures_to_full_size();
     }

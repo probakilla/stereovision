@@ -28,6 +28,11 @@ void imageprocessor::crop(const QRect & rect)
         _processed_image = tmp->copy();
 }
 
+void imageprocessor::splitImage()
+{
+    _image = _image.copy(0, 0, _image.width() / 2, _image.height());
+}
+
 QImage imageprocessor::cvMatToQimage(const cv::Mat &src)
 {
     return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();
