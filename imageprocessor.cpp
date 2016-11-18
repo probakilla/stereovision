@@ -28,46 +28,14 @@ void imageprocessor::crop(const QRect & rect)
         _processed_image = tmp->copy();
 }
 
-void imageprocessor::splitImage()
-{
-    _image = _image.copy(0, 0, _image.width() / 2, _image.height());
-}
-
-QImage imageprocessor::cvMatToQimage(const cv::Mat &src)
-{
-    return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();
-}
-
-cv::Mat imageprocessor::qimageToCvMat(const QImage & image)
-{
-    return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone();
-}
-
-
-QImage imageprocessor::getImage() const
-{
-    return _image;
-}
-
-void imageprocessor::setImage(const QImage & image)
-{
-    _image = image.copy();
-}
-
-bool imageprocessor::getIsCroped() const
-{
-    return _is_croped;
-}
-
-QImage imageprocessor::getProcessedImage() const
-{
-    return _processed_image;
-}
-
-void imageprocessor::imageResize(const int & width,const int & height)
-{
-    _image = _image.scaled(width, height, Qt::KeepAspectRatio);
-}
+cv::Mat imageprocessor::qimageToCvMat(const QImage & image) {   return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone(); }
+QImage imageprocessor::cvMatToQimage(const cv::Mat &src)    {   return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();                                          }
+void imageprocessor::imageResize(const int & width,const int & height)  { _image = _image.scaled(width, height, Qt::KeepAspectRatio);                                                   }
+void imageprocessor::splitImage()                           {   _image = _image.copy(0, 0, _image.width() / 2, _image.height());                                                        }
+QImage imageprocessor::getImage() const                     {   return _image;              }
+void imageprocessor::setImage(const QImage & image)         {   _image = image.copy();      }
+bool imageprocessor::getIsCroped() const                    {   return _is_croped;          }
+QImage imageprocessor::getProcessedImage() const            {   return _processed_image;    }
 
 
 void imageprocessor::blur()
