@@ -37,7 +37,6 @@ void imageprocessor::setImage(const QImage & image)         {   _image = image.c
 bool imageprocessor::getIsCroped() const                    {   return _is_croped;          }
 QImage imageprocessor::getProcessedImage() const            {   return _processed_image;    }
 
-
 void imageprocessor::blur()
 {
     cv::Mat dest;
