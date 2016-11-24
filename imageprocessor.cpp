@@ -2,7 +2,7 @@
 
 #include <QImage>
 
-imageprocessor::imageprocessor(const QImage & image) : _image{image}, _processed_image{image}, _is_croped{false} {}
+imageprocessor::imageprocessor(const QImage & image) : _image{image}, _image_alt{image}, _processed_image{image}, _is_croped{false} {}
 
 
 void imageprocessor::crop(const QRect & rect)
@@ -38,6 +38,12 @@ bool imageprocessor::getIsCroped() const                    {   return _is_crope
 QImage imageprocessor::getProcessedImage() const            {   return _processed_image;    }
 
 
+void imageprocessor::divide_image()
+{
+    _image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
+    _image = _image.copy(0, 0, _image.width() / 2, _image.height());
+}
+
 void imageprocessor::blur()
 {
     cv::Mat dest;
@@ -64,4 +70,38 @@ void imageprocessor::sobel()
     cv::imshow("Aperçu de Sobel", dest);
     cv::waitKey();
     _processed_image = imageprocessor::cvMatToQimage(dest);
+}
+
+void imageprocessor::disparity_map()
+{
+    divide_image();
+    cv::Mat left_image = qimageToCvMat(_image);
+    cv::Mat right_image = qimageToCvMat(_image_alt);
+    cv::Mat disp, disp8;
+
+    cv::cvtColor(left_image, left_image, CV_BGR2GRAY);
+    cv::cvtColor(right_image, right_image, CV_BGR2GRAY);
+
+    cv::StereoSGBM sbm;
+
+    int sadSize = 3;
+    sbm.SADWindowSize = sadSize;
+    sbm.numberOfDisparities = 144;//144; 128
+    sbm.preFilterCap = 10; //63
+    sbm.minDisparity = 0; //-39; 0
+    sbm.uniquenessRatio = 10;
+    sbm.speckleWindowSize = 100;
+    sbm.speckleRange = 32;
+    sbm.disp12MaxDiff = 1;
+    sbm.fullDP = true;
+    sbm.P1 = sadSize*sadSize*4;
+    sbm.P2 = sadSize*sadSize*32;
+
+    sbm(left_image, right_image, disp);
+    normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
+
+    cv::Mat dispSGBMscale;
+    disp.convertTo(dispSGBMscale,CV_32F, 1./16);
+
+    imshow("image", disp8);
 }

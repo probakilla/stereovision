@@ -35,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionSobel = menuEdition->addAction("Sobel");
         actionSobel->setShortcut(tr("Ctrl+B"));
         connect(actionSobel, SIGNAL(triggered()), this, SLOT(sobel()));
+    QAction* actionDispMap = menuEdition->addAction("Disparity map");
+        actionDispMap->setShortcut(tr("Ctrl+M"));
+        connect(actionDispMap, SIGNAL(triggered()), this, SLOT(dispMap()));
 
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
@@ -205,6 +208,14 @@ void MainWindow::sobel()
     {
         i->sobel();
         this->dispProcessedImage();
+    }
+}
+
+void MainWindow::dispMap()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        i->disparity_map();
     }
 }
 

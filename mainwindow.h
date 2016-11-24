@@ -44,6 +44,7 @@ public slots:
     void blur();
     void canny();
     void sobel();
+    void dispMap();
 
 private:
     void set_pictures_to_full_size();
