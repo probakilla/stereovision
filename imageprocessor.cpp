@@ -37,7 +37,6 @@ void imageprocessor::setImage(const QImage & image)         {   _image = image.c
 bool imageprocessor::getIsCroped() const                    {   return _is_croped;          }
 QImage imageprocessor::getProcessedImage() const            {   return _processed_image;    }
 
-
 void imageprocessor::divide_image()
 {
     _image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
