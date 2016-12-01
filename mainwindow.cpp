@@ -84,6 +84,8 @@ MainWindow::~MainWindow()
 {
     delete pixMap;
     delete picture;
+    delete pixMapDivided;
+    delete pictureDivided;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -137,6 +139,8 @@ void MainWindow::openFile()
 
     set_pictures_to_full_size();
 
+    split = false;
+
     dFrame->setSubRect(picture->rect());
 }
 
@@ -181,6 +185,8 @@ void MainWindow::splitImageInHalf(){
         i->splitImage();
 
         set_pictures_to_full_size();
+
+        split = true;
     }
 }
 
@@ -213,6 +219,10 @@ void MainWindow::sobel()
 
 void MainWindow::dispMap()
 {
+    if(!split)
+    {
+        splitImageInHalf();
+    }
     if( pixMap && picture && !pixMap->isNull())
     {
         i->disparity_map();

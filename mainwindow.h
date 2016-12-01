@@ -58,6 +58,8 @@ private:
 
     QPixmap *pixMapDivided;
     QLabel *pictureDivided;
+
+    bool split;
 };
 
 #endif // MAINWINDOW_H

@@ -32,7 +32,6 @@ public:
     QImage cvMatToQimage(const cv::Mat & src);
     QImage getImage() const;
     void setImage(const QImage & image);
-    void splitImage ();
 
     cv::Mat qimageToCvMat (const QImage & getImage);
     bool getIsCroped() const;
@@ -40,6 +39,7 @@ public:
     void canny();
     void sobel();
     void disparity_map ();
+    void splitImage ();
 
     QImage getProcessedImage () const;
 
@@ -48,7 +48,6 @@ private:
     QImage _image_alt;// The right part of the image
     QImage _processed_image;
     bool _is_croped;
-    void divide_image ();
 };
 
 #endif // IMAGEPROCESSOR_H

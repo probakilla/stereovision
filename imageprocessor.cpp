@@ -31,16 +31,16 @@ void imageprocessor::crop(const QRect & rect)
 cv::Mat imageprocessor::qimageToCvMat(const QImage & image) {   return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone(); }
 QImage imageprocessor::cvMatToQimage(const cv::Mat &src)    {   return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();                                          }
 void imageprocessor::imageResize(const int & width,const int & height)  { _image = _image.scaled(width, height, Qt::KeepAspectRatio);                                                   }
-void imageprocessor::splitImage()                           {   _image = _image.copy(0, 0, _image.width() / 2, _image.height());                                                        }
 QImage imageprocessor::getImage() const                     {   return _image;              }
 void imageprocessor::setImage(const QImage & image)         {   _image = image.copy();      }
 bool imageprocessor::getIsCroped() const                    {   return _is_croped;          }
 QImage imageprocessor::getProcessedImage() const            {   return _processed_image;    }
 
-void imageprocessor::divide_image()
+void imageprocessor::splitImage()
 {
     _image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
     _image = _image.copy(0, 0, _image.width() / 2, _image.height());
+
 }
 
 void imageprocessor::blur()
@@ -73,7 +73,6 @@ void imageprocessor::sobel()
 
 void imageprocessor::disparity_map()
 {
-    divide_image();
     cv::Mat left_image = qimageToCvMat(_image);
     cv::Mat right_image = qimageToCvMat(_image_alt);
     cv::Mat disp, disp8;
