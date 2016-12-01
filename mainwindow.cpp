@@ -38,6 +38,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionDispMap = menuEdition->addAction("Disparity map");
         actionDispMap->setShortcut(tr("Ctrl+M"));
         connect(actionDispMap, SIGNAL(triggered()), this, SLOT(dispMap()));
+    QAction* actionFeatDetect = menuEdition->addAction("Feature Detection");
+        actionFeatDetect->setShortcut(tr("Ctrl+E"));
+        connect(actionFeatDetect, SIGNAL(triggered()), this, SLOT(featDetect()));
+    QAction* actionFeatMatch = menuEdition->addAction("Feature Matching");
+        actionFeatMatch->setShortcut(tr("Ctrl+A"));
+        connect(actionFeatMatch, SIGNAL(triggered()), this, SLOT(featMatch()));
 
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
         actionOpenFile->setShortcut(tr("Ctrl+O"));
@@ -182,7 +188,7 @@ void MainWindow::splitImageInHalf(){
         pictureDivided->setPixmap(*pixMapDivided);
         pictureDivided->move(pixMap->width()+5, 0);
         pictureDivided->show();
-        i->splitImage();
+        i->splitImage(pixMap, pixMapDivided);
 
         set_pictures_to_full_size();
 
@@ -223,9 +229,25 @@ void MainWindow::dispMap()
     {
         splitImageInHalf();
     }
-    if( pixMap && picture && !pixMap->isNull())
+    if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
         i->disparity_map();
+    }
+}
+
+void MainWindow::featDetect()
+{
+    if(pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
+    {
+        i->featureDetection();
+    }
+}
+
+void MainWindow::featMatch()
+{
+    if( pixMap && picture && !pixMap->isNull())
+    {
+        i->featureDetection();
     }
 }
 

@@ -45,6 +45,8 @@ public slots:
     void canny();
     void sobel();
     void dispMap();
+    void featDetect();
+    void featMatch();
 
 private:
     void set_pictures_to_full_size();

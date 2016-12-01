@@ -22,6 +22,10 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/nonfree/features2d.hpp"
+#include "opencv2/nonfree/nonfree.hpp"
+
 class imageprocessor: public QWidget
 {
     Q_OBJECT
@@ -39,7 +43,9 @@ public:
     void canny();
     void sobel();
     void disparity_map ();
-    void splitImage ();
+    void featureDetection();
+    void featureMatching();
+    void splitImage (QPixmap *left, QPixmap *right);
 
     QImage getProcessedImage () const;
 
@@ -48,6 +54,8 @@ private:
     QImage _image_alt;// The right part of the image
     QImage _processed_image;
     bool _is_croped;
+
+    std::vector<cv::KeyPoint> keypoints_left, keypoints_right;
 };
 
 #endif // IMAGEPROCESSOR_H

@@ -36,10 +36,12 @@ void imageprocessor::setImage(const QImage & image)         {   _image = image.c
 bool imageprocessor::getIsCroped() const                    {   return _is_croped;          }
 QImage imageprocessor::getProcessedImage() const            {   return _processed_image;    }
 
-void imageprocessor::splitImage()
+void imageprocessor::splitImage(QPixmap *left, QPixmap *right)
 {
-    _image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
-    _image = _image.copy(0, 0, _image.width() / 2, _image.height());
+    /*_image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
+    _image = _image.copy(0, 0, _image.width() / 2, _image.height());*/
+    _image = left->toImage();
+    _image_alt = right->toImage();
 
 }
 
@@ -102,4 +104,66 @@ void imageprocessor::disparity_map()
     disp.convertTo(dispSGBMscale,CV_32F, 1./16);
 
     imshow("image", disp8);
+}
+
+void imageprocessor::featureDetection()
+{
+    cv::Mat left_image = qimageToCvMat(_image);
+    cv::Mat right_image = qimageToCvMat(_image_alt);
+
+    int minHessian = 400;
+    cv::SurfFeatureDetector surf(minHessian);
+
+    surf.detect(left_image, keypoints_left);
+    surf.detect(right_image, keypoints_right);
+
+    cv::Mat img_keypoints_left, img_keypoints_right;
+
+    cv::drawKeypoints(left_image, keypoints_left, img_keypoints_left);
+    cv::drawKeypoints(right_image, keypoints_right, img_keypoints_right);
+
+    cv::imshow("Keypoints Left", img_keypoints_left);
+    cv::waitKey();
+    cv::imshow("Keypoints Right", img_keypoints_right);
+    cv::waitKey();
+}
+
+void imageprocessor::featureMatching()
+{
+    cv::Mat left_image = qimageToCvMat(_image);
+    cv::Mat right_image = qimageToCvMat(_image_alt);
+
+    cv::SurfDescriptorExtractor extractor;
+    cv::Mat descriptor_left, descriptor_right;
+    extractor.compute(left_image, keypoints_left, descriptor_left);
+    extractor.compute(right_image, keypoints_right, descriptor_right);
+
+    cv::FlannBasedMatcher matcher;
+    std::vector<cv::DMatch> matches;
+    matcher.match(descriptor_left, descriptor_right, matches);
+
+    double max_dist = 0;
+    double min_dist = 100;
+
+    for(int i = 0; i < descriptor_left.rows; i++)
+    {
+        double dist = matches[i].distance;
+        if(dist < min_dist)
+            min_dist = dist;
+        if(dist > max_dist)
+            max_dist = dist;
+    }
+
+    std::vector<cv::DMatch> correct_matches;
+    for(int i = 0; i < descriptor_left.rows; i++)
+    {
+        if(matches[i].distance <= cv::max(2*min_dist, 0.02))
+            correct_matches.push_back(matches[i]);
+    }
+
+    cv::Mat img_matches;
+    cv::drawMatches(left_image, keypoints_left, right_image, keypoints_right, correct_matches, img_matches);
+
+    imshow("Matches", img_matches);
+    cv::waitKey();
 }
