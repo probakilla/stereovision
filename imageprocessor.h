@@ -35,7 +35,9 @@ public:
     void crop(const QRect & rect);
     QImage cvMatToQimage(const cv::Mat & src);
     QImage getImage() const;
+    QImage getImageAlt() const;
     void setImage(const QImage & image);
+    void setImageAlt(const QImage & image);
 
     cv::Mat qimageToCvMat (const QImage & getImage);
     bool getIsCroped() const;
@@ -45,7 +47,8 @@ public:
     void disparity_map ();
     void featureDetection();
     void featureMatching();
-    void splitImage (QPixmap *left, QPixmap *right);
+    void splitImage ();
+    void drawKeyPoints();
 
     QImage getProcessedImage () const;
 
@@ -53,9 +56,9 @@ private:
     QImage _image;
     QImage _image_alt;// The right part of the image
     QImage _processed_image;
+    cv::Mat left_image, right_image;
+    std::vector<cv::KeyPoint> left_keypoints, right_keypoints;
     bool _is_croped;
-
-    std::vector<cv::KeyPoint> keypoints_left, keypoints_right;
 };
 
 #endif // IMAGEPROCESSOR_H

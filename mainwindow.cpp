@@ -107,13 +107,13 @@ void MainWindow::set_pictures_to_full_size()
     if( pixMap && picture && !pixMap->isNull() && pixMapDivided->isNull())
     {
             picture->setPixmap( pixMap->scaled(centralWidget()->width(),centralWidget()->height(), Qt::KeepAspectRatio));
-            i->imageResize(centralWidget()->width(), centralWidget()->height());
+            //i->imageResize(centralWidget()->width(), centralWidget()->height());
             picture->adjustSize();
     }
     else if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
         picture->setPixmap( pixMap->scaled((centralWidget()->width()/2),centralWidget()->height(), Qt::KeepAspectRatio));
-        i->imageResize(centralWidget()->width(), centralWidget()->height());
+        //i->imageResize(centralWidget()->width(), centralWidget()->height());
         picture->adjustSize();
 
         pictureDivided->move(picture->width() +2, 0);
@@ -139,7 +139,7 @@ void MainWindow::openFile()
     *pixMap = QPixmap::fromImage(image);
 
     if(!pixMapDivided->isNull()){
-        *pixMapDivided = NULL;
+        pixMapDivided = NULL;
         pictureDivided->clear();
     }
 
@@ -182,13 +182,15 @@ void MainWindow::crop( QRect area)
 void MainWindow::splitImageInHalf(){
     if( pixMap && picture && !pixMap->isNull())
     {
-       *pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
+       /**pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
        *pixMap = pixMap->copy(0, 0, pixMap->width()/2, pixMap->height());
         picture->setPixmap(*pixMap);
         pictureDivided->setPixmap(*pixMapDivided);
         pictureDivided->move(pixMap->width()+5, 0);
-        pictureDivided->show();
-        i->splitImage(pixMap, pixMapDivided);
+        pictureDivided->show();*/
+        i->splitImage();
+        *pixMap = QPixmap::fromImage(i->getImage());
+        *pixMapDivided = QPixmap::fromImage(i->getImageAlt());
 
         set_pictures_to_full_size();
 
@@ -239,15 +241,15 @@ void MainWindow::featDetect()
 {
     if(pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        i->featureDetection();
+        i->drawKeyPoints();
     }
 }
 
 void MainWindow::featMatch()
 {
-    if( pixMap && picture && !pixMap->isNull())
+    if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        i->featureDetection();
+        i->featureMatching();
     }
 }
 
