@@ -123,7 +123,7 @@ void imageprocessor::featureDetection()
     surf.detect(right_image, right_keypoints);
 }
 
-void imageprocessor::drawKeyPoints()
+void imageprocessor::showKeyPoints()
 {
     featureDetection();
 
@@ -136,7 +136,7 @@ void imageprocessor::drawKeyPoints()
     imshow("Right Image", img_keypoints_right);
 }
 
-//TODO; doesn't work
+//works ?
 void imageprocessor::featureMatching()
 {
     featureDetection();

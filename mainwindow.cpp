@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
         actionDivision->setShortcut(tr("Ctrl+D"));
         connect(actionDivision, SIGNAL(triggered()), this, SLOT(splitImageInHalf()));
-     QAction *actionBlur = menuEdition->addAction("Flouter l'image");
+    QAction *actionBlur = menuEdition->addAction("Flouter l'image");
         actionBlur->setShortcut(tr("Ctrl+F"));
         connect(actionBlur, SIGNAL(triggered()), this, SLOT(blur()));
     QAction* actionCanny = menuEdition->addAction("Canny");
@@ -38,9 +38,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionDispMap = menuEdition->addAction("Disparity map");
         actionDispMap->setShortcut(tr("Ctrl+M"));
         connect(actionDispMap, SIGNAL(triggered()), this, SLOT(dispMap()));
-    QAction* actionFeatDetect = menuEdition->addAction("Feature Detection");
-        actionFeatDetect->setShortcut(tr("Ctrl+E"));
-        connect(actionFeatDetect, SIGNAL(triggered()), this, SLOT(featDetect()));
+    QAction* actionShowKeyPoints = menuEdition->addAction("Show Keypoints");
+        actionShowKeyPoints->setShortcut(tr("Ctrl+E"));
+        connect(actionShowKeyPoints, SIGNAL(triggered()), this, SLOT(showKP()));
     QAction* actionFeatMatch = menuEdition->addAction("Feature Matching");
         actionFeatMatch->setShortcut(tr("Ctrl+A"));
         connect(actionFeatMatch, SIGNAL(triggered()), this, SLOT(featMatch()));
@@ -237,11 +237,11 @@ void MainWindow::dispMap()
     }
 }
 
-void MainWindow::featDetect()
+void MainWindow::showKP()
 {
     if(pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        i->drawKeyPoints();
+        i->showKeyPoints();
     }
 }
 

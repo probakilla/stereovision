@@ -48,7 +48,7 @@ public:
     void featureDetection();
     void featureMatching();
     void splitImage ();
-    void drawKeyPoints();
+    void showKeyPoints();
 
     QImage getProcessedImage () const;
 
