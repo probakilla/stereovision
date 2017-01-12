@@ -38,12 +38,14 @@ void imageprocessor::setImageAlt(const QImage & imagealt)   {   _image_alt = ima
 bool imageprocessor::getIsCroped() const                    {   return _is_croped;           }
 QImage imageprocessor::getProcessedImage() const            {   return _processed_image;     }
 
+//Divise _image en deux et place la seconde moitié dans _image_alt
 void imageprocessor::splitImage()
 {
     _image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
     _image = _image.copy(0, 0, _image.width() / 2, _image.height());
 }
 
+//Floute l'image de gauche
 void imageprocessor::blur()
 {
     cv::Mat dest;
@@ -54,6 +56,7 @@ void imageprocessor::blur()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+//Applique Canny à l'image de gauche
 void imageprocessor::canny()
 {
     cv::Mat dest;
@@ -63,6 +66,7 @@ void imageprocessor::canny()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+//Applique Sobel à l'image de gauche.
 void imageprocessor::sobel()
 {
     cv::Mat dest;
@@ -72,6 +76,7 @@ void imageprocessor::sobel()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+//Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
     left_image = qimageToCvMat(_image);
@@ -109,6 +114,7 @@ void imageprocessor::disparity_map()
     imshow("image", disp8);
 }
 
+//Détecte les features des images chargées.
 void imageprocessor::featureDetection()
 {
     left_image = qimageToCvMat(_image);
@@ -123,6 +129,7 @@ void imageprocessor::featureDetection()
     surf.detect(right_image, right_keypoints);
 }
 
+//Affiche les "features"/key points
 void imageprocessor::showKeyPoints()
 {
     featureDetection();
@@ -136,7 +143,7 @@ void imageprocessor::showKeyPoints()
     imshow("Right Image", img_keypoints_right);
 }
 
-//works ?
+//Affiche les bonnes correspondances entre les features des deux images
 void imageprocessor::featureMatching()
 {
     featureDetection();
@@ -165,7 +172,7 @@ void imageprocessor::featureMatching()
     std::vector<cv::DMatch> correct_matches;
     for(int i = 0; i < descriptor_left.rows; i++)
     {
-        if(matches[i].distance <= cv::max(2*min_dist, 0.02))
+        if(matches[i].distance <= cv::max(2*min_dist, 0.10))
             correct_matches.push_back(matches[i]);
     }
 
