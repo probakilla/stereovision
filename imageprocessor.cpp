@@ -86,7 +86,7 @@ void imageprocessor::disparity_map()
 
     int sadSize = 3;//in range 3-11
     sbm.SADWindowSize = sadSize;
-    sbm.numberOfDisparities = 144;//number divisible by 16
+    sbm.numberOfDisparities = 16*sadSize;//number divisible by 16
     sbm.preFilterCap = 10;
     sbm.minDisparity = 0; //Need to be adjusted accordingly to the rectification
     sbm.uniquenessRatio = 10;//in range 5-15
