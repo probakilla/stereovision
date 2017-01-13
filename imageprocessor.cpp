@@ -94,15 +94,15 @@ void imageprocessor::disparity_map()
 
     int sadSize = 3;//in range 3-11
     sbm.SADWindowSize = sadSize;
-    sbm.numberOfDisparities = 16*sadSize;//number divisible by 16
+    sbm.numberOfDisparities = 16*sadSize;
     sbm.preFilterCap = 10;
-    sbm.minDisparity = 0; //Need to be adjusted accordingly to the rectification
+    sbm.minDisparity = 0;
     sbm.uniquenessRatio = 10;//in range 5-15
     sbm.speckleWindowSize = 100;//in range 50-200
-    sbm.speckleRange = 32;
+    sbm.speckleRange = 2;
     sbm.disp12MaxDiff = 1;
     sbm.fullDP = true;
-    sbm.P1 = sadSize*sadSize*4*8;
+    sbm.P1 = sadSize*sadSize*8*4;
     sbm.P2 = sadSize*sadSize*32*4;
 
     sbm(left_image, right_image, disp);
