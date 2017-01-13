@@ -81,7 +81,8 @@ void imageprocessor::disparity_map()
 {
     left_image = qimageToCvMat(_image);
     right_image = qimageToCvMat(_image_alt);
-
+    // Note a propos de stereo BM : il semble inverser le blanc et le noir.
+    // A voir si ça joue dans la précision de la carte de disparité.
     cv::Mat disp, disp8;
 
     cv::cvtColor(left_image, left_image, CV_BGR2GRAY);
