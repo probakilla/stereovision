@@ -45,7 +45,7 @@ public slots:
     void canny();
     void sobel();
     void dispMap();
-    void featDetect();
+    void showKP();
     void featMatch();
 
 private:

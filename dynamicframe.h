@@ -44,16 +44,16 @@ private:
     void setSelectionRectangle();
     void moveCornerInSubArea(MovableButton* c);
 
-    int sizeCorner;
-    QRect subArea;
+    int _sizeCorner;
+    QRect _subArea;
 
-    MovableButton* tlc;
-    MovableButton* trc;
-    MovableButton* blc;
-    MovableButton* brc;
-    QRubberBand* rect;
+    MovableButton* _tlc;
+    MovableButton* _trc;
+    MovableButton* _blc;
+    MovableButton* _brc;
+    QRubberBand* _rect;
 
-    Action state;
+    Action _state;
 
 };
 

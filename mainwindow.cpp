@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
         actionDivision->setShortcut(tr("Ctrl+D"));
         connect(actionDivision, SIGNAL(triggered()), this, SLOT(splitImageInHalf()));
-     QAction *actionBlur = menuEdition->addAction("Flouter l'image");
+    QAction *actionBlur = menuEdition->addAction("Flouter l'image");
         actionBlur->setShortcut(tr("Ctrl+F"));
         connect(actionBlur, SIGNAL(triggered()), this, SLOT(blur()));
     QAction* actionCanny = menuEdition->addAction("Canny");
@@ -38,9 +38,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionDispMap = menuEdition->addAction("Disparity map");
         actionDispMap->setShortcut(tr("Ctrl+M"));
         connect(actionDispMap, SIGNAL(triggered()), this, SLOT(dispMap()));
-    QAction* actionFeatDetect = menuEdition->addAction("Feature Detection");
-        actionFeatDetect->setShortcut(tr("Ctrl+E"));
-        connect(actionFeatDetect, SIGNAL(triggered()), this, SLOT(featDetect()));
+    QAction* actionShowKeyPoints = menuEdition->addAction("Show Keypoints");
+        actionShowKeyPoints->setShortcut(tr("Ctrl+E"));
+        connect(actionShowKeyPoints, SIGNAL(triggered()), this, SLOT(showKP()));
     QAction* actionFeatMatch = menuEdition->addAction("Feature Matching");
         actionFeatMatch->setShortcut(tr("Ctrl+A"));
         connect(actionFeatMatch, SIGNAL(triggered()), this, SLOT(featMatch()));
@@ -107,13 +107,13 @@ void MainWindow::set_pictures_to_full_size()
     if( pixMap && picture && !pixMap->isNull() && pixMapDivided->isNull())
     {
             picture->setPixmap( pixMap->scaled(centralWidget()->width(),centralWidget()->height(), Qt::KeepAspectRatio));
-            i->imageResize(centralWidget()->width(), centralWidget()->height());
+            //i->imageResize(centralWidget()->width(), centralWidget()->height());
             picture->adjustSize();
     }
     else if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
         picture->setPixmap( pixMap->scaled((centralWidget()->width()/2),centralWidget()->height(), Qt::KeepAspectRatio));
-        i->imageResize(centralWidget()->width(), centralWidget()->height());
+        //i->imageResize(centralWidget()->width(), centralWidget()->height());
         picture->adjustSize();
 
         pictureDivided->move(picture->width() +2, 0);
@@ -139,7 +139,7 @@ void MainWindow::openFile()
     *pixMap = QPixmap::fromImage(image);
 
     if(!pixMapDivided->isNull()){
-        *pixMapDivided = NULL;
+        pixMapDivided = NULL;
         pictureDivided->clear();
     }
 
@@ -182,13 +182,15 @@ void MainWindow::crop( QRect area)
 void MainWindow::splitImageInHalf(){
     if( pixMap && picture && !pixMap->isNull())
     {
-       *pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
+       /**pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
        *pixMap = pixMap->copy(0, 0, pixMap->width()/2, pixMap->height());
         picture->setPixmap(*pixMap);
         pictureDivided->setPixmap(*pixMapDivided);
         pictureDivided->move(pixMap->width()+5, 0);
-        pictureDivided->show();
-        i->splitImage(pixMap, pixMapDivided);
+        pictureDivided->show();*/
+        i->splitImage();
+        *pixMap = QPixmap::fromImage(i->getImage());
+        *pixMapDivided = QPixmap::fromImage(i->getImageAlt());
 
         set_pictures_to_full_size();
 
@@ -235,19 +237,19 @@ void MainWindow::dispMap()
     }
 }
 
-void MainWindow::featDetect()
+void MainWindow::showKP()
 {
     if(pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        i->featureDetection();
+        i->showKeyPoints();
     }
 }
 
 void MainWindow::featMatch()
 {
-    if( pixMap && picture && !pixMap->isNull())
+    if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        i->featureDetection();
+        i->featureMatching();
     }
 }
 

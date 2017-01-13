@@ -31,20 +31,21 @@ void imageprocessor::crop(const QRect & rect)
 cv::Mat imageprocessor::qimageToCvMat(const QImage & image) {   return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone(); }
 QImage imageprocessor::cvMatToQimage(const cv::Mat &src)    {   return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();                                          }
 void imageprocessor::imageResize(const int & width,const int & height)  { _image = _image.scaled(width, height, Qt::KeepAspectRatio);                                                   }
-QImage imageprocessor::getImage() const                     {   return _image;              }
-void imageprocessor::setImage(const QImage & image)         {   _image = image.copy();      }
-bool imageprocessor::getIsCroped() const                    {   return _is_croped;          }
-QImage imageprocessor::getProcessedImage() const            {   return _processed_image;    }
+QImage imageprocessor::getImage() const                     {   return _image;               }
+QImage imageprocessor::getImageAlt() const                  {   return _image_alt;           }
+void imageprocessor::setImage(const QImage & image)         {   _image = image.copy();       }
+void imageprocessor::setImageAlt(const QImage & imagealt)   {   _image_alt = imagealt.copy();}
+bool imageprocessor::getIsCroped() const                    {   return _is_croped;           }
+QImage imageprocessor::getProcessedImage() const            {   return _processed_image;     }
 
-void imageprocessor::splitImage(QPixmap *left, QPixmap *right)
+//Divise _image en deux et place la seconde moitié dans _image_alt
+void imageprocessor::splitImage()
 {
-    /*_image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
-    _image = _image.copy(0, 0, _image.width() / 2, _image.height());*/
-    _image = left->toImage();
-    _image_alt = right->toImage();
-
+    _image_alt = _image.copy(_image.width() / 2, 0, _image.width() / 2, _image.height());
+    _image = _image.copy(0, 0, _image.width() / 2, _image.height());
 }
 
+//Floute l'image de gauche
 void imageprocessor::blur()
 {
     cv::Mat dest;
@@ -55,6 +56,7 @@ void imageprocessor::blur()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+//Applique Canny à l'image de gauche
 void imageprocessor::canny()
 {
     cv::Mat dest;
@@ -64,6 +66,7 @@ void imageprocessor::canny()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+//Applique Sobel à l'image de gauche.
 void imageprocessor::sobel()
 {
     cv::Mat dest;
@@ -73,10 +76,15 @@ void imageprocessor::sobel()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+//Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
-    cv::Mat left_image = qimageToCvMat(_image);
-    cv::Mat right_image = qimageToCvMat(_image_alt);
+    left_image = qimageToCvMat(_image);
+    right_image = qimageToCvMat(_image_alt);
+
+    //imshow("image", left_image);
+    //imshow("image alt", right_image);
+    //cv::waitKey();
     cv::Mat disp, disp8;
 
     cv::cvtColor(left_image, left_image, CV_BGR2GRAY);
@@ -106,37 +114,44 @@ void imageprocessor::disparity_map()
     imshow("image", disp8);
 }
 
+//Détecte les features des images chargées.
 void imageprocessor::featureDetection()
 {
-    cv::Mat left_image = qimageToCvMat(_image);
-    cv::Mat right_image = qimageToCvMat(_image_alt);
+    left_image = qimageToCvMat(_image);
+    right_image = qimageToCvMat(_image_alt);
+    cv::cvtColor(left_image, left_image, CV_BGR2GRAY);
+    cv::cvtColor(right_image, right_image, CV_BGR2GRAY);
 
     int minHessian = 400;
     cv::SurfFeatureDetector surf(minHessian);
 
-    surf.detect(left_image, keypoints_left);
-    surf.detect(right_image, keypoints_right);
+    surf.detect(left_image, left_keypoints);
+    surf.detect(right_image, right_keypoints);
+}
+
+//Affiche les "features"/key points
+void imageprocessor::showKeyPoints()
+{
+    featureDetection();
 
     cv::Mat img_keypoints_left, img_keypoints_right;
 
-    cv::drawKeypoints(left_image, keypoints_left, img_keypoints_left);
-    cv::drawKeypoints(right_image, keypoints_right, img_keypoints_right);
+    cv::drawKeypoints(left_image, left_keypoints, img_keypoints_left);
+    cv::drawKeypoints(right_image, right_keypoints, img_keypoints_right);
 
-    cv::imshow("Keypoints Left", img_keypoints_left);
-    cv::waitKey();
-    cv::imshow("Keypoints Right", img_keypoints_right);
-    cv::waitKey();
+    imshow("Left Image", img_keypoints_left);
+    imshow("Right Image", img_keypoints_right);
 }
 
+//Affiche les bonnes correspondances entre les features des deux images
 void imageprocessor::featureMatching()
 {
-    cv::Mat left_image = qimageToCvMat(_image);
-    cv::Mat right_image = qimageToCvMat(_image_alt);
+    featureDetection();
 
     cv::SurfDescriptorExtractor extractor;
     cv::Mat descriptor_left, descriptor_right;
-    extractor.compute(left_image, keypoints_left, descriptor_left);
-    extractor.compute(right_image, keypoints_right, descriptor_right);
+    extractor.compute(left_image, left_keypoints, descriptor_left);
+    extractor.compute(right_image, right_keypoints, descriptor_right);
 
     cv::FlannBasedMatcher matcher;
     std::vector<cv::DMatch> matches;
@@ -157,12 +172,12 @@ void imageprocessor::featureMatching()
     std::vector<cv::DMatch> correct_matches;
     for(int i = 0; i < descriptor_left.rows; i++)
     {
-        if(matches[i].distance <= cv::max(2*min_dist, 0.02))
+        if(matches[i].distance <= cv::max(2*min_dist, 0.10))
             correct_matches.push_back(matches[i]);
     }
 
     cv::Mat img_matches;
-    cv::drawMatches(left_image, keypoints_left, right_image, keypoints_right, correct_matches, img_matches);
+    cv::drawMatches(left_image, left_keypoints, right_image, right_keypoints, correct_matches, img_matches);
 
     imshow("Matches", img_matches);
     cv::waitKey();

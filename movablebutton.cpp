@@ -1,14 +1,14 @@
 #include "movablebutton.h"
 
-MovableButton::MovableButton(QWidget *parent, int size) : QLabel(parent), moving{false}
+MovableButton::MovableButton(QWidget *parent, int size) : QLabel(parent), _moving{false}
 {
     setFixedSize(size,size);
 }
 
-void MovableButton::setMoving(bool value)  { moving = value;   }
-bool MovableButton::isMoving()             {return moving;     }
-void MovableButton::mousePressEvent(QMouseEvent * event)    { event->pos(); moving = true;  }
-void MovableButton::mouseReleaseEvent(QMouseEvent * event)  { event->pos(); moving = false; }
+void MovableButton::setMoving(bool value)  { _moving = value;   }
+bool MovableButton::isMoving()             {return _moving;     }
+void MovableButton::mousePressEvent(QMouseEvent * event)    { event->pos(); _moving = true;  }
+void MovableButton::mouseReleaseEvent(QMouseEvent * event)  { event->pos(); _moving = false; }
 /*Paint square frame*/
 void MovableButton::paintEvent(QPaintEvent *)
 {
