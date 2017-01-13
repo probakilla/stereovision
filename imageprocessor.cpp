@@ -84,18 +84,18 @@ void imageprocessor::disparity_map()
 
     cv::StereoSGBM sbm;
 
-    int sadSize = 3;
+    int sadSize = 3;//in range 3-11
     sbm.SADWindowSize = sadSize;
-    sbm.numberOfDisparities = 144;//144; 128
-    sbm.preFilterCap = 10; //63
-    sbm.minDisparity = 0; //-39; 0
-    sbm.uniquenessRatio = 10;
-    sbm.speckleWindowSize = 100;
+    sbm.numberOfDisparities = 144;//number divisible by 16
+    sbm.preFilterCap = 10;
+    sbm.minDisparity = 0; //Need to be adjusted accordingly to the rectification
+    sbm.uniquenessRatio = 10;//in range 5-15
+    sbm.speckleWindowSize = 100;//in range 50-200
     sbm.speckleRange = 32;
     sbm.disp12MaxDiff = 1;
     sbm.fullDP = true;
-    sbm.P1 = sadSize*sadSize*4;
-    sbm.P2 = sadSize*sadSize*32;
+    sbm.P1 = sadSize*sadSize*4*8;
+    sbm.P2 = sadSize*sadSize*32*4;
 
     sbm(left_image, right_image, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
