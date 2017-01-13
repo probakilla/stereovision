@@ -30,7 +30,7 @@ void imageprocessor::crop(const QRect & rect)
 
 cv::Mat imageprocessor::qimageToCvMat(const QImage & image) {   return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone(); }
 QImage imageprocessor::cvMatToQimage(const cv::Mat &src)    {   return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();                                          }
-void imageprocessor::imageResize(const int & width,const int & height)  { _image = _image.scaled(width, height, Qt::KeepAspectRatio);                                                   }
+void imageprocessor::imageResize(const int & width,const int & height)  { _image = _image.scaled(width, height, Qt::KeepAspectRatio); _image_alt = _image_alt.scaled(width, height, Qt::KeepAspectRatio);                                                   }
 QImage imageprocessor::getImage() const                     {   return _image;               }
 QImage imageprocessor::getImageAlt() const                  {   return _image_alt;           }
 void imageprocessor::setImage(const QImage & image)         {   _image = image.copy();       }
@@ -82,9 +82,6 @@ void imageprocessor::disparity_map()
     left_image = qimageToCvMat(_image);
     right_image = qimageToCvMat(_image_alt);
 
-    //imshow("image", left_image);
-    //imshow("image alt", right_image);
-    //cv::waitKey();
     cv::Mat disp, disp8;
 
     cv::cvtColor(left_image, left_image, CV_BGR2GRAY);
@@ -92,7 +89,7 @@ void imageprocessor::disparity_map()
 
     cv::StereoSGBM sbm;
 
-    int sadSize = 3;//in range 3-11
+    int sadSize = 5;//in range 3-11
     sbm.SADWindowSize = sadSize;
     sbm.numberOfDisparities = 16*sadSize;
     sbm.preFilterCap = 10;
@@ -101,7 +98,6 @@ void imageprocessor::disparity_map()
     sbm.speckleWindowSize = 100;//in range 50-200
     sbm.speckleRange = 2;
     sbm.disp12MaxDiff = 1;
-    sbm.fullDP = true;
     sbm.P1 = sadSize*sadSize*8*4;
     sbm.P2 = sadSize*sadSize*32*4;
 
@@ -146,7 +142,7 @@ void imageprocessor::showKeyPoints()
 //Affiche les bonnes correspondances entre les features des deux images
 void imageprocessor::featureMatching()
 {
-    featureDetection();
+   featureDetection();
 
     cv::SurfDescriptorExtractor extractor;
     cv::Mat descriptor_left, descriptor_right;

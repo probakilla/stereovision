@@ -139,7 +139,7 @@ void MainWindow::openFile()
     *pixMap = QPixmap::fromImage(image);
 
     if(!pixMapDivided->isNull()){
-        pixMapDivided = NULL;
+        *pixMapDivided = NULL;
         pictureDivided->clear();
     }
 
