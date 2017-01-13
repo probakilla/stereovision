@@ -1,26 +1,26 @@
 #include "dynamicframe.h"
 
 
-DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), sizeCorner{sizeCorners}, state{Action::stopped}
+DynamicFrame::DynamicFrame(QWidget *parent, int _sizeCorners) : QWidget(parent), _sizeCorner{_sizeCorners}, _state{Action::stopped}
 {
     setMouseTracking(true);
     setAutoFillBackground(true);
 
-    tlc = new MovableButton(this,sizeCorners);
-        tlc->hide();
-    trc = new MovableButton(this,sizeCorners);
-        trc->hide();
-    blc = new MovableButton(this,sizeCorners);
-        blc->hide();
-    brc = new MovableButton(this,sizeCorners);
-        brc->hide();
+    _tlc = new MovableButton(this,_sizeCorners);
+        _tlc->hide();
+    _trc = new MovableButton(this,_sizeCorners);
+        _trc->hide();
+    _blc = new MovableButton(this,_sizeCorners);
+        _blc->hide();
+    _brc = new MovableButton(this,_sizeCorners);
+        _brc->hide();
 
-    rect = new QRubberBand(QRubberBand::Rectangle, this);
-    QGraphicsColorizeEffect *e = new QGraphicsColorizeEffect(rect);
+    _rect = new QRubberBand(QRubberBand::Rectangle, this);
+    QGraphicsColorizeEffect *e = new QGraphicsColorizeEffect(_rect);
     e->setColor(QColor("black"));
-    rect->setGraphicsEffect(e);
-    rect->resize(sizeCorners,sizeCorners);
-    rect->hide();
+    _rect->setGraphicsEffect(e);
+    _rect->resize(_sizeCorners,_sizeCorners);
+    _rect->hide();
 }
 
 /**
@@ -29,8 +29,8 @@ DynamicFrame::DynamicFrame(QWidget *parent, int sizeCorners) : QWidget(parent), 
  */
 void DynamicFrame::setSubRect( QRect area )
 {
-    subArea = area;
-    subArea.setWidth(subArea.width()/2);
+    _subArea = area;
+    _subArea.setWidth(_subArea.width()/2);
 }
 
 /**
@@ -38,7 +38,7 @@ void DynamicFrame::setSubRect( QRect area )
  */
 void DynamicFrame::launch()
 {
-    state = Action::following;
+    _state = Action::following;
 }
 
 /**
@@ -48,51 +48,51 @@ void DynamicFrame::launch()
  */
 void DynamicFrame::moveCorners(QPoint pos)
 {
-    if(tlc->isMoving())
+    if(_tlc->isMoving())
     {
-        tlc->move(pos);
-        trc->move(trc->x(), pos.y());
-        blc->move(pos.x(),  brc->y());
+        _tlc->move(pos);
+        _trc->move(_trc->x(), pos.y());
+        _blc->move(pos.x(),  _brc->y());
     }
-    if(trc->isMoving())
+    if(_trc->isMoving())
     {
-        trc->move(pos);
-        tlc->move(tlc->x(), pos.y());
-        brc->move(pos.x(), brc->y());
+        _trc->move(pos);
+        _tlc->move(_tlc->x(), pos.y());
+        _brc->move(pos.x(), _brc->y());
     }
-    if(blc->isMoving())
+    if(_blc->isMoving())
     {
-        blc->move(pos);
-        tlc->move(pos.x(), tlc->y());
-        brc->move(brc->x(), pos.y());
+        _blc->move(pos);
+        _tlc->move(pos.x(), _tlc->y());
+        _brc->move(_brc->x(), pos.y());
     }
-    if(brc->isMoving())
+    if(_brc->isMoving())
     {
-        brc->move(pos);
-        blc->move(blc->x(),pos.y());
-        trc->move(pos.x(), trc->y());
+        _brc->move(pos);
+        _blc->move(_blc->x(),pos.y());
+        _trc->move(pos.x(), _trc->y());
     }
 
-    moveCornerInSubArea(tlc);
-    moveCornerInSubArea(trc);
-    moveCornerInSubArea(blc);
-    moveCornerInSubArea(brc);
+    moveCornerInSubArea(_tlc);
+    moveCornerInSubArea(_trc);
+    moveCornerInSubArea(_blc);
+    moveCornerInSubArea(_brc);
 }
 
 /**
- * @brief DynamicFrame::moveCornerInSubArea moves the corner c if it is out of the confinemant area
+ * @brief DynamicFrame::moveCornerIn_subArea moves the corner c if it is out of the confinemant area
  * @param c
  */
 void DynamicFrame::moveCornerInSubArea(MovableButton* c)
 {
-    if( c->x() < subArea.x())
-        c->move(subArea.x(), c->y());
-    if( c->x()+sizeCorner > subArea.x() + subArea.width())
-        c->move(subArea.x() + subArea.width() - sizeCorner, c->y());
-    if( c->y() < subArea.y())
-        c->move(c->x(),subArea.y());
-    if( c->y()+sizeCorner > subArea.y() + subArea.height())
-        c->move(c->x(), subArea.y() + subArea.height() - sizeCorner);
+    if( c->x() < _subArea.x())
+        c->move(_subArea.x(), c->y());
+    if( c->x()+_sizeCorner > _subArea.x() + _subArea.width())
+        c->move(_subArea.x() + _subArea.width() - _sizeCorner, c->y());
+    if( c->y() < _subArea.y())
+        c->move(c->x(),_subArea.y());
+    if( c->y()+_sizeCorner > _subArea.y() + _subArea.height())
+        c->move(c->x(), _subArea.y() + _subArea.height() - _sizeCorner);
 }
 
 /**
@@ -100,20 +100,20 @@ void DynamicFrame::moveCornerInSubArea(MovableButton* c)
  */
 void DynamicFrame::setSelectionRectangle()
 {
-    int x = (tlc->x() < trc->x() ? tlc->x() : trc->x());
-    int y = (tlc->y() < blc->y() ? tlc->y() : blc->y());
-    int w = abs(tlc->x() - trc->x());
-    int h = abs(tlc->y() - blc->y());
+    int x = (_tlc->x() < _trc->x() ? _tlc->x() : _trc->x());
+    int y = (_tlc->y() < _blc->y() ? _tlc->y() : _blc->y());
+    int w = abs(_tlc->x() - _trc->x());
+    int h = abs(_tlc->y() - _blc->y());
 
-    rect->setGeometry(x, y, w+sizeCorner, h+sizeCorner);
+    _rect->setGeometry(x, y, w+_sizeCorner, h+_sizeCorner);
 }
 
 void DynamicFrame::mouseMoveEvent(QMouseEvent * event)
 {
     /*updates the position of the corners and the frame when the mouse is moving and the widget is cropping*/
-    if( state == Action::cropping || state == Action::recropping)
+    if( _state == Action::cropping || _state == Action::recropping)
     {
-        moveCorners(event->pos() - QPoint(sizeCorner,sizeCorner)/2);
+        moveCorners(event->pos() - QPoint(_sizeCorner,_sizeCorner)/2);
         setSelectionRectangle();
     }
 }
@@ -122,20 +122,20 @@ void DynamicFrame::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
 
     /*show and place the corners when the user make a first click during a crop*/
-    if( state == Action::following)
+    if( _state == Action::following)
     {
-        tlc->move(event->pos());
-            tlc->show();
-        trc->move(event->pos());
-            trc->show();
-        blc->move(event->pos());
-            blc->show();
-        brc->move(event->pos());
-            brc->setMoving(true);
-            brc->show();
+        _tlc->move(event->pos());
+            _tlc->show();
+        _trc->move(event->pos());
+            _trc->show();
+        _blc->move(event->pos());
+            _blc->show();
+        _brc->move(event->pos());
+            _brc->setMoving(true);
+            _brc->show();
 
-        rect->show();
-        state = Action::cropping;
+        _rect->show();
+        _state = Action::cropping;
     }
 }
 
@@ -143,10 +143,10 @@ void DynamicFrame::mouseReleaseEvent(QMouseEvent *event)
 {
     QWidget::mouseReleaseEvent(event);
     /*When the mouse is released, it change the state of the widget and take keyboard inputs to validate the crop*/
-    if(state == Action::cropping)
+    if(_state == Action::cropping)
     {
-        brc->setMoving(false);
-        state = Action::recropping;
+        _brc->setMoving(false);
+        _state = Action::recropping;
         grabKeyboard();
     }
 }
@@ -155,21 +155,21 @@ void DynamicFrame::keyPressEvent ( QKeyEvent * event )
 {
     /*When the user press enter the widget reset and a cropped signal is emmited*/
     QWidget::keyPressEvent( event );
-    if( (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) && state == Action::recropping)
+    if( (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) && _state == Action::recropping)
     {
         releaseKeyboard();
-        tlc->hide();
-        trc->hide();
-        blc->hide();
-        brc->hide();
-        rect->hide();
-        state = Action::stopped;
-        int x = (tlc->x() < trc->x() ? tlc->x() : trc->x());
-        int y = (tlc->y() < blc->y() ? tlc->y() : blc->y());
-        int w = abs(tlc->x() - trc->x());
-        int h = abs(tlc->y() - blc->y());
+        _tlc->hide();
+        _trc->hide();
+        _blc->hide();
+        _brc->hide();
+        _rect->hide();
+        _state = Action::stopped;
+        int x = (_tlc->x() < _trc->x() ? _tlc->x() : _trc->x());
+        int y = (_tlc->y() < _blc->y() ? _tlc->y() : _blc->y());
+        int w = abs(_tlc->x() - _trc->x());
+        int h = abs(_tlc->y() - _blc->y());
 
-        emit cropped(QRect(x, y, w+sizeCorner, h+sizeCorner));
+        emit cropped(QRect(x, y, w+_sizeCorner, h+_sizeCorner));
     }
 }
 
