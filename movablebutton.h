@@ -28,7 +28,7 @@ class MovableButton : public QLabel
         virtual void paintEvent(QPaintEvent * event);
 
     private:
-        bool moving;
+        bool _moving;
 };
 
 #endif // MOVABLEBUTTON_H
