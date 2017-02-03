@@ -89,6 +89,7 @@ void imageprocessor::disparity_map()
 
     cv::StereoSGBM sbm;
 
+
     int sadSize = 5;//in range 3-11
     sbm.SADWindowSize = sadSize;
     sbm.numberOfDisparities = 16*sadSize;
@@ -103,9 +104,6 @@ void imageprocessor::disparity_map()
 
     sbm(left_image, right_image, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
-
-    cv::Mat dispSGBMscale;
-    disp.convertTo(dispSGBMscale,CV_32F, 1./16);
 
     imshow("image", disp8);
 }
@@ -142,7 +140,7 @@ void imageprocessor::showKeyPoints()
 //Affiche les bonnes correspondances entre les features des deux images
 void imageprocessor::featureMatching()
 {
-   featureDetection();
+    featureDetection();
 
     cv::SurfDescriptorExtractor extractor;
     cv::Mat descriptor_left, descriptor_right;

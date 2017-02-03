@@ -182,12 +182,6 @@ void MainWindow::crop( QRect area)
 void MainWindow::splitImageInHalf(){
     if( pixMap && picture && !pixMap->isNull())
     {
-       /**pixMapDivided = pixMap->copy(pixMap->width()/2, 0, pixMap->width()/2, pixMap->height());
-       *pixMap = pixMap->copy(0, 0, pixMap->width()/2, pixMap->height());
-        picture->setPixmap(*pixMap);
-        pictureDivided->setPixmap(*pixMapDivided);
-        pictureDivided->move(pixMap->width()+5, 0);
-        pictureDivided->show();*/
         i->splitImage();
         *pixMap = QPixmap::fromImage(i->getImage());
         *pixMapDivided = QPixmap::fromImage(i->getImageAlt());
