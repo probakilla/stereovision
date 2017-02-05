@@ -139,8 +139,8 @@ void MainWindow::openFile()
     *pixMap = QPixmap::fromImage(image);
 
     if(!pixMapDivided->isNull()){
-        *pixMapDivided = NULL;
         pictureDivided->clear();
+        *pixMapDivided = QPixmap();
     }
 
     set_pictures_to_full_size();
@@ -166,17 +166,11 @@ void MainWindow::saveName(int pix)
 
 void MainWindow::crop( QRect area)
 {
-    if(i->getIsCroped() == false)
-    {
+   if( pixMap && picture && !pixMap->isNull())
+   {
         i->crop(area);
-        *pixMap = QPixmap::fromImage(i->getProcessedImage());
-        set_pictures_to_full_size();
-    }
-    else
-    {
-        QMessageBox::warning(this, "Attention", QString::fromUtf8("Cette image a déjà été croppée"));
-    }
-
+        this->dispProcessedImage();
+   }
 }
 
 void MainWindow::splitImageInHalf(){

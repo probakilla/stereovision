@@ -79,6 +79,7 @@ void imageprocessor::sobel()
 //Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
+    featureMatching();
     left_image = qimageToCvMat(_image);
     right_image = qimageToCvMat(_image_alt);
     // Note a propos de stereo BM : il semble inverser le blanc et le noir.
@@ -91,14 +92,15 @@ void imageprocessor::disparity_map()
     cv::StereoSGBM sbm;
 
 
-    int sadSize = 5;//in range 3-11
+    int sadSize = 3;//in range 3-11
+    int min_disp = 16;
     sbm.SADWindowSize = sadSize;
-    sbm.numberOfDisparities = 16*sadSize;
+    sbm.numberOfDisparities = 112 - min_disp;
     sbm.preFilterCap = 10;
-    sbm.minDisparity = 0;
+    sbm.minDisparity = min_disp;
     sbm.uniquenessRatio = 10;//in range 5-15
     sbm.speckleWindowSize = 100;//in range 50-200
-    sbm.speckleRange = 2;
+    sbm.speckleRange = 32;
     sbm.disp12MaxDiff = 1;
     sbm.P1 = sadSize*sadSize*8*4;
     sbm.P2 = sadSize*sadSize*32*4;
@@ -176,4 +178,38 @@ void imageprocessor::featureMatching()
 
     imshow("Matches", img_matches);
     cv::waitKey();
+
+    //Calcul de la matrice de transformation entre les deux images mais je ne sais pas quoi en faire(il faudrait aussi utiliser solvePnP mais je n'ai pas compris sont fonctionnenement)
+    cv::vector<cv::Point2f> train_pts, query_pts;
+    matches2points(right_keypoints, left_keypoints, correct_matches, train_pts, query_pts);
+    cv::Mat H = cv::findHomography(train_pts, query_pts, cv::RANSAC, 4);
+    cv::warpPerspective(left_image, right_image, H, right_image.size());
+    imshow("Matches", right_image);
+    cv::waitKey();
 }
+
+//Converts matching indices to xy points
+void imageprocessor::matches2points(const cv::vector<cv::KeyPoint>& train, const cv::vector<cv::KeyPoint>& query,
+                    const std::vector<cv::DMatch>& matches, std::vector<cv::Point2f>& pts_train,
+                    std::vector<cv::Point2f>& pts_query)
+{
+
+    pts_train.clear();
+    pts_query.clear();
+    pts_train.reserve(matches.size());
+    pts_query.reserve(matches.size());
+
+    size_t i = 0;
+
+    for (; i < matches.size(); i++)
+    {
+
+        const cv::DMatch & dmatch = matches[i];
+
+        pts_query.push_back(query[dmatch.queryIdx].pt);
+        pts_train.push_back(train[dmatch.trainIdx].pt);
+
+    }
+
+}
+

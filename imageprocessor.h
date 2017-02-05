@@ -50,6 +50,8 @@ public:
     void splitImage ();
     void showKeyPoints();
 
+    void matches2points(const cv::vector<cv::KeyPoint>& train, const cv::vector<cv::KeyPoint>& query, const std::vector<cv::DMatch>& matches, std::vector<cv::Point2f>& pts_train, std::vector<cv::Point2f>& pts_query);
+
     QImage getProcessedImage () const;
 
 private:
