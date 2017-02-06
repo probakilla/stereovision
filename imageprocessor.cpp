@@ -105,10 +105,10 @@ void imageprocessor::disparity_map()
     int sadSize = 5;//in range 3-11
     int min_disp = -64;
     sbm.SADWindowSize = sadSize;
-    sbm.numberOfDisparities = 192;
+    sbm.numberOfDisparities = 192 - min_disp;
     sbm.preFilterCap = 4;
     sbm.minDisparity = min_disp;
-    sbm.uniquenessRatio = 1;//in range 5-15
+    sbm.uniquenessRatio = 5;//in range 5-15
     sbm.speckleWindowSize = 150;//in range 50-200
     sbm.speckleRange = 2;
     sbm.disp12MaxDiff = 10;
@@ -118,8 +118,6 @@ void imageprocessor::disparity_map()
 
     sbm(left_image, right_image, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
-    imshow("left_image", left_image);
-    imshow("right_image", right_image);
     imshow("image", disp8);
 }
 
