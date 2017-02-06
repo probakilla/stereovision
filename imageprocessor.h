@@ -33,7 +33,7 @@ public:
     imageprocessor(const QImage & getImage);
     void imageResize(const int & width,const int & height);
     void crop(const QRect & rect);
-    QImage cvMatToQimage(const cv::Mat & src);
+    QImage cvMatToQimage(const cv::Mat & src, bool canny = false);
     QImage getImage() const;
     QImage getImageAlt() const;
     void setImage(const QImage & image);
@@ -49,9 +49,6 @@ public:
     void featureMatching();
     void splitImage ();
     void showKeyPoints();
-
-    void matches2points(const cv::vector<cv::KeyPoint>& train, const cv::vector<cv::KeyPoint>& query, const std::vector<cv::DMatch>& matches, std::vector<cv::Point2f>& pts_train, std::vector<cv::Point2f>& pts_query);
-
     QImage getProcessedImage () const;
 
 private:

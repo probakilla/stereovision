@@ -28,8 +28,17 @@ void imageprocessor::crop(const QRect & rect)
         _processed_image = tmp->copy();
 }
 
+
 cv::Mat imageprocessor::qimageToCvMat(const QImage & image) {   return cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine()).clone(); }
-QImage imageprocessor::cvMatToQimage(const cv::Mat &src)    {   return QImage(src.data, src.cols, src.rows, src.step, _image.format()).copy();                                          }
+
+QImage imageprocessor::cvMatToQimage(const cv::Mat &src, bool canny)
+{
+    if (canny == false)
+        return QImage((uchar*)src.data, src.cols, src.rows, src.step, _image.format()).copy();
+    else
+        return QImage((uchar*)src.data, src.cols, src.rows, src.step, QImage::Format_Indexed8).copy();
+}
+
 void imageprocessor::imageResize(const int & width,const int & height)  { _image = _image.scaled(width, height, Qt::KeepAspectRatio); _image_alt = _image_alt.scaled(width, height, Qt::KeepAspectRatio);                                                   }
 QImage imageprocessor::getImage() const                     {   return _image;               }
 QImage imageprocessor::getImageAlt() const                  {   return _image_alt;           }
@@ -63,7 +72,7 @@ void imageprocessor::canny()
     cv::Canny(imageprocessor::qimageToCvMat(getImage()), dest, 100, 200);
     cv::imshow("Aperçu de Canny", dest);
     cv::waitKey();
-    _processed_image = imageprocessor::cvMatToQimage(dest);
+    _processed_image = imageprocessor::cvMatToQimage(dest, true);
 }
 
 //Applique Sobel à l'image de gauche.
@@ -74,12 +83,13 @@ void imageprocessor::sobel()
     cv::imshow("Aperçu de Sobel", dest);
     cv::waitKey();
     _processed_image = imageprocessor::cvMatToQimage(dest);
+    cv::Mat processed_image = qimageToCvMat(_processed_image);
+    cv::imshow("_processed_image", processed_image);
 }
 
 //Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
-    featureMatching();
     left_image = qimageToCvMat(_image);
     right_image = qimageToCvMat(_image_alt);
     // Note a propos de stereo BM : il semble inverser le blanc et le noir.
@@ -92,22 +102,24 @@ void imageprocessor::disparity_map()
     cv::StereoSGBM sbm;
 
 
-    int sadSize = 3;//in range 3-11
-    int min_disp = 16;
+    int sadSize = 5;//in range 3-11
+    int min_disp = -64;
     sbm.SADWindowSize = sadSize;
-    sbm.numberOfDisparities = 112 - min_disp;
-    sbm.preFilterCap = 10;
+    sbm.numberOfDisparities = 192;
+    sbm.preFilterCap = 4;
     sbm.minDisparity = min_disp;
-    sbm.uniquenessRatio = 10;//in range 5-15
-    sbm.speckleWindowSize = 100;//in range 50-200
-    sbm.speckleRange = 32;
-    sbm.disp12MaxDiff = 1;
+    sbm.uniquenessRatio = 1;//in range 5-15
+    sbm.speckleWindowSize = 150;//in range 50-200
+    sbm.speckleRange = 2;
+    sbm.disp12MaxDiff = 10;
+    sbm.fullDP = false;
     sbm.P1 = sadSize*sadSize*8*4;
     sbm.P2 = sadSize*sadSize*32*4;
 
     sbm(left_image, right_image, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
-
+    imshow("left_image", left_image);
+    imshow("right_image", right_image);
     imshow("image", disp8);
 }
 
@@ -178,38 +190,4 @@ void imageprocessor::featureMatching()
 
     imshow("Matches", img_matches);
     cv::waitKey();
-
-    //Calcul de la matrice de transformation entre les deux images mais je ne sais pas quoi en faire(il faudrait aussi utiliser solvePnP mais je n'ai pas compris sont fonctionnenement)
-    cv::vector<cv::Point2f> train_pts, query_pts;
-    matches2points(right_keypoints, left_keypoints, correct_matches, train_pts, query_pts);
-    cv::Mat H = cv::findHomography(train_pts, query_pts, cv::RANSAC, 4);
-    cv::warpPerspective(left_image, right_image, H, right_image.size());
-    imshow("Matches", right_image);
-    cv::waitKey();
 }
-
-//Converts matching indices to xy points
-void imageprocessor::matches2points(const cv::vector<cv::KeyPoint>& train, const cv::vector<cv::KeyPoint>& query,
-                    const std::vector<cv::DMatch>& matches, std::vector<cv::Point2f>& pts_train,
-                    std::vector<cv::Point2f>& pts_query)
-{
-
-    pts_train.clear();
-    pts_query.clear();
-    pts_train.reserve(matches.size());
-    pts_query.reserve(matches.size());
-
-    size_t i = 0;
-
-    for (; i < matches.size(); i++)
-    {
-
-        const cv::DMatch & dmatch = matches[i];
-
-        pts_query.push_back(query[dmatch.queryIdx].pt);
-        pts_train.push_back(train[dmatch.trainIdx].pt);
-
-    }
-
-}
-
