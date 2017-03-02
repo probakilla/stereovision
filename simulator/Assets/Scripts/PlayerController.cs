@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
     {
 
         const string input = "D:/command.txt";
-        const string output = "D:/image.txt";
+        const string output = "D:/camera.png";
 
         //Starts a new reading cycle
         bool opened = false;
@@ -87,10 +87,25 @@ public class PlayerController : MonoBehaviour
                         m_TurnInputValue = -0.1f;
                         m_MovementInputValue = 0f;
                     }
+                    // Create a texture the size of the screen
+                    int width = Screen.width;
+                    int height = Screen.height;
+                    Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
 
-                    StreamWriter sw = new StreamWriter(output);
+                    // Read screen contents into the texture
+                    tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                    tex.Apply();
+
+                    // Encode texture into PNG
+                    byte[] bytes = tex.EncodeToPNG();
+                    Destroy(tex);
+
+                    // Write the image
+                     File.WriteAllBytes(output, bytes);
+
+                   /* StreamWriter sw = new StreamWriter(output);
                     sw.Write("hello");
-                    sw.Close();
+                    sw.Close();*/
                 }
             }
             catch (Exception e)
