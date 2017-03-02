@@ -21,6 +21,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
 
     QMenu* menuFile = menuBar()->addMenu("&Fichier");
     QAction* actionOpenFile = menuFile->addAction("Ouvrir");
+        actionOpenFile->setShortcut(tr("Ctrl+O"));
+        connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
+    QAction* actionOpenRightFile = menuFile->addAction("Ouvrir image droite");
+        connect(actionOpenRightFile, SIGNAL(triggered()), this, SLOT(openRightFile()));
 
     QMenu* menuEdition = menuBar()->addMenu("&Edition");
     QAction* actionDivision = menuEdition->addAction("Diviser l'image en deux");
@@ -46,8 +50,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
         connect(actionFeatMatch, SIGNAL(triggered()), this, SLOT(featMatch()));
 
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
-        actionOpenFile->setShortcut(tr("Ctrl+O"));
-        connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
+
     /*QAction* actionSaveName = menuFile->addAction("&Enregistrer sous");
         actionSaveName->setShortcut(tr("Ctrl+S"));
         connect(actionSaveName, SIGNAL(triggered()), this, SLOT(saveName()));*/
@@ -74,15 +77,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
 
         connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(saveName(int)));
 
-
     // Création de la barre d'outils
     QToolBar *toolBar = addToolBar("Tools");
     QAction* actionCrop = toolBar->addAction("Crop");
         actionCrop->setShortcut(tr("Ctrl+K"));
         connect(actionCrop, SIGNAL(triggered()), dFrame, SLOT(launch()));
     toolBar->addAction(actionCrop);
-
-
 }
 
 
@@ -148,6 +148,23 @@ void MainWindow::openFile()
     split = false;
 
     dFrame->setSubRect(picture->rect());
+}
+
+
+void MainWindow::openRightFile()
+{
+    QFileDialog file_dialog(this);
+    QString path = file_dialog.getOpenFileName(this, "Ouvrir une image", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
+    QImageReader reader(path);
+    QImage image = reader.read();
+    i->setImageAlt(image);
+    *pixMapDivided = QPixmap::fromImage(image);
+
+    set_pictures_to_full_size();
+
+    split = true;
+
+    dFrame->setSubRect(pictureDivided->rect());
 }
 
 // TODO : Improve the function so that it takes the pixmap to save as a parameter.
@@ -250,4 +267,3 @@ void MainWindow::dispProcessedImage()
 
     set_pictures_to_full_size();
 }
-

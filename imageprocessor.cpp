@@ -7,6 +7,7 @@ imageprocessor::imageprocessor(const QImage & image) : _image{image}, _image_alt
 
 void imageprocessor::crop(const QRect & rect)
 {
+
         _is_croped = true;
         QImage* tmp = new QImage ((rect.width() * 2), rect.height(), _image.format());
 
@@ -90,6 +91,7 @@ void imageprocessor::sobel()
 //Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
+    //featureMatching();
     left_image = qimageToCvMat(_image);
     right_image = qimageToCvMat(_image_alt);
     // Note a propos de stereo BM : il semble inverser le blanc et le noir.
@@ -99,24 +101,22 @@ void imageprocessor::disparity_map()
     cv::cvtColor(left_image, left_image, CV_BGR2GRAY);
     cv::cvtColor(right_image, right_image, CV_BGR2GRAY);
 
-    cv::StereoSGBM sbm;
 
+    cv::StereoSGBM sgbm;
+    int sadSize = 5;
+    sgbm.SADWindowSize = 5;
+    sgbm.numberOfDisparities = 192;
+    sgbm.preFilterCap = 4;
+    sgbm.minDisparity = -64;
+    sgbm.uniquenessRatio = 5;
+    sgbm.speckleWindowSize = 150;
+    sgbm.speckleRange = 2;
+    sgbm.disp12MaxDiff = 10;
+    sgbm.fullDP = false;
+    sgbm.P1 = sadSize*sadSize*8*4;
+    sgbm.P2 = sadSize*sadSize*32*4;
 
-    int sadSize = 5;//in range 3-11
-    int min_disp = -64;
-    sbm.SADWindowSize = sadSize;
-    sbm.numberOfDisparities = 192 - min_disp;
-    sbm.preFilterCap = 4;
-    sbm.minDisparity = min_disp;
-    sbm.uniquenessRatio = 5;//in range 5-15
-    sbm.speckleWindowSize = 150;//in range 50-200
-    sbm.speckleRange = 2;
-    sbm.disp12MaxDiff = 10;
-    sbm.fullDP = false;
-    sbm.P1 = sadSize*sadSize*8*4;
-    sbm.P2 = sadSize*sadSize*32*4;
-
-    sbm(left_image, right_image, disp);
+    sgbm(left_image, right_image, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
     imshow("image", disp8);
 }
@@ -188,4 +188,5 @@ void imageprocessor::featureMatching()
 
     imshow("Matches", img_matches);
     cv::waitKey();
+
 }

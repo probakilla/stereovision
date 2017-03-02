@@ -38,6 +38,7 @@ public:
 public slots:
     void msgBoxAbout();
     void openFile();
+    void openRightFile();
     void saveName(int pix);
     void crop( QRect area);
     void splitImageInHalf();
