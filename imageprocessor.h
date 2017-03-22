@@ -44,6 +44,7 @@ public:
     void blur();
     void canny();
     void sobel();
+    void calibrate_cameras();
     void disparity_map ();
     void featureDetection();
     void featureMatching();

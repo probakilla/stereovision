@@ -88,6 +88,67 @@ void imageprocessor::sobel()
     cv::imshow("_processed_image", processed_image);
 }
 
+void imageprocessor::calibrate_cameras()
+{
+    std::vector< std::vector< cv::Point3f > > objects_points;
+    std::vector< std::vector< cv::Point2f > > imagePoints1, imagePoints2;
+    std::vector< cv::Point2f > corners1, corners2;
+
+    cv::Size board_size = cv::Size(13, 9);
+
+    cv::Mat gray1, gray2;
+    cvtColor(left_image, gray1, CV_BGR2GRAY);
+    cvtColor(right_image, gray2, CV_BGR2GRAY);
+    bool found1 = false, found2 = false;
+
+    found1 = cv::findChessboardCorners(left_image, board_size, corners1,
+				       CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+    found2 = cv::findChessboardCorners(right_image, board_size, corners2,
+				       CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+
+    if (found1)
+      {
+	cv::cornerSubPix(gray1, corners1, cv::Size(5, 5), cv::Size(-1, -1),
+			 cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
+	cv::drawChessboardCorners(gray1, board_size, corners1, found1);
+      }
+    if (found2)
+      {
+	cv::cornerSubPix(gray2, corners2, cv::Size(5, 5), cv::Size(-1, -1),
+			 cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
+	cv::drawChessboardCorners(gray2, board_size, corners2, found2);
+      }
+    float square_size = 5;
+    std::vector< cv::Point3f > obj;
+    for (int i = 0; i < 13; i++)
+      for (int j = 0; j < 9; j++)
+	obj.push_back(cv::Point3f((float)j * square_size, (float)i * square_size, 0));
+
+    if (found1 && found2) {
+      //cout << i << ". Found corners!" << endl;
+      imagePoints1.push_back(corners1);
+      imagePoints2.push_back(corners2);
+      objects_points.push_back(obj);
+    }
+    cv::Mat left_camera_matrix, right_camera_matrix, left_dist_coeffs, right_dist_coeffs;
+    cv::Size img_size = left_image.size();
+    cv::Mat R, T, E, F;
+
+    cv::calibrateCamera(objects_points, left_image_points, img_size, left_camera_matrix, left_dist_coeffs, leftRvecs, leftTvecs);
+    cv::calibrateCamera(objects_points, rightImgPoints, img_size, right_camera_matrix, right_dist_coeffs, rightRvecs, rightTvecs);
+
+    cv::stereoCalibrate(objects_points, left_image_points, rightImgPoints, left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, E, F, TermCriteria(TermCriteria::COUNT+TermCriteria::EPS,30,0.000001),CALIB_FIX_INTRINSIC);
+    cv::Mat R1, R2, P1, P2, Q;
+    cv::stereoRectify(left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, R1, R2, P1, P2, Q, 0);
+    cv::Mat left_map1, left_map2, right_map1, right_map2;
+    cv::initUndistortRectifyMap(left_camera_matrix, left_dist_coeffs, R1, P1, img_size, CV_32FC1, left_map1, left_map2);
+    cv::initUndistortRectifyMap(right_camera_matrix, right_dist_coeffs, R2, P2, img_size, CV_32FC1, right_map1, right_map2);
+    cv::remap(left_image, left_image, left_map1, left_map2, cv::INTER_LINEAR);
+    cv::remap(right_image, right_image, right_map1, right_map2, cv::INTER_LINEAR);
+}
+
+
+
 //Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
@@ -161,7 +222,7 @@ void imageprocessor::featureMatching()
     extractor.compute(right_image, right_keypoints, descriptor_right);
 
     cv::FlannBasedMatcher matcher;
-    std::vector<cv::DMatch> matches;
+    std::std::vector<cv::DMatch> matches;
     matcher.match(descriptor_left, descriptor_right, matches);
 
     double max_dist = 0;
@@ -176,7 +237,7 @@ void imageprocessor::featureMatching()
             max_dist = dist;
     }
 
-    std::vector<cv::DMatch> correct_matches;
+    std::std::vector<cv::DMatch> correct_matches;
     for(int i = 0; i < descriptor_left.rows; i++)
     {
         if(matches[i].distance <= cv::max(2*min_dist, 0.10))
