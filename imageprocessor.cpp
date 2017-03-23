@@ -91,7 +91,7 @@ void imageprocessor::sobel()
 void imageprocessor::calibrate_cameras()
 {
     std::vector< std::vector< cv::Point3f > > objects_points;
-    std::vector< std::vector< cv::Point2f > > imagePoints1, imagePoints2;
+    std::vector< std::vector< cv::Point2f > > left_image_points, right_image_points;
     std::vector< cv::Point2f > corners1, corners2;
 
     cv::Size board_size = cv::Size(13, 9);
@@ -126,18 +126,19 @@ void imageprocessor::calibrate_cameras()
 
     if (found1 && found2) {
       //cout << i << ". Found corners!" << endl;
-      imagePoints1.push_back(corners1);
-      imagePoints2.push_back(corners2);
+      left_image_points.push_back(corners1);
+      right_image_points.push_back(corners2);
       objects_points.push_back(obj);
     }
     cv::Mat left_camera_matrix, right_camera_matrix, left_dist_coeffs, right_dist_coeffs;
     cv::Size img_size = left_image.size();
     cv::Mat R, T, E, F;
+    std::vector<cv::Mat>leftRvecs, leftTvecs, rightRvecs, rightTvecs;
 
     cv::calibrateCamera(objects_points, left_image_points, img_size, left_camera_matrix, left_dist_coeffs, leftRvecs, leftTvecs);
-    cv::calibrateCamera(objects_points, rightImgPoints, img_size, right_camera_matrix, right_dist_coeffs, rightRvecs, rightTvecs);
+    cv::calibrateCamera(objects_points, right_image_points, img_size, right_camera_matrix, right_dist_coeffs, rightRvecs, rightTvecs);
 
-    cv::stereoCalibrate(objects_points, left_image_points, rightImgPoints, left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, E, F, TermCriteria(TermCriteria::COUNT+TermCriteria::EPS,30,0.000001),CALIB_FIX_INTRINSIC);
+    cv::stereoCalibrate(objects_points, left_image_points, right_image_points, left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, E, F, cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS,30,0.000001),cv::CALIB_FIX_INTRINSIC);
     cv::Mat R1, R2, P1, P2, Q;
     cv::stereoRectify(left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, R1, R2, P1, P2, Q, 0);
     cv::Mat left_map1, left_map2, right_map1, right_map2;
@@ -222,7 +223,7 @@ void imageprocessor::featureMatching()
     extractor.compute(right_image, right_keypoints, descriptor_right);
 
     cv::FlannBasedMatcher matcher;
-    std::std::vector<cv::DMatch> matches;
+    std::vector<cv::DMatch> matches;
     matcher.match(descriptor_left, descriptor_right, matches);
 
     double max_dist = 0;
@@ -237,7 +238,7 @@ void imageprocessor::featureMatching()
             max_dist = dist;
     }
 
-    std::std::vector<cv::DMatch> correct_matches;
+    std::vector<cv::DMatch> correct_matches;
     for(int i = 0; i < descriptor_left.rows; i++)
     {
         if(matches[i].distance <= cv::max(2*min_dist, 0.10))
