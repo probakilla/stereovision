@@ -94,35 +94,39 @@ void imageprocessor::calibrate_cameras()
     std::vector< std::vector< cv::Point2f > > left_image_points, right_image_points;
     std::vector< cv::Point2f > corners1, corners2;
 
-    cv::Size board_size = cv::Size(13, 9);
+    cv::Size board_size = cv::Size(9 ,14);
 
     cv::Mat gray1, gray2;
+    left_image = qimageToCvMat(_image);
+    right_image = qimageToCvMat(_image_alt);
     cvtColor(left_image, gray1, CV_BGR2GRAY);
     cvtColor(right_image, gray2, CV_BGR2GRAY);
     bool found1 = false, found2 = false;
-
     found1 = cv::findChessboardCorners(left_image, board_size, corners1,
 				       CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
     found2 = cv::findChessboardCorners(right_image, board_size, corners2,
 				       CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+    if(!found1 || !found2)
+    {
+        std::cout << "Je ne trouve pas de damier" << std::endl;
+        return;
+    }
 
-    if (found1)
-      {
-	cv::cornerSubPix(gray1, corners1, cv::Size(5, 5), cv::Size(-1, -1),
-			 cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
-	cv::drawChessboardCorners(gray1, board_size, corners1, found1);
-      }
-    if (found2)
-      {
-	cv::cornerSubPix(gray2, corners2, cv::Size(5, 5), cv::Size(-1, -1),
-			 cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
-	cv::drawChessboardCorners(gray2, board_size, corners2, found2);
-      }
-    float square_size = 5;
+
+    cv::cornerSubPix(gray1, corners1, cv::Size(5, 5), cv::Size(-1, -1),
+                     cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
+    cv::drawChessboardCorners(gray1, board_size, corners1, found1);
+
+
+    cv::cornerSubPix(gray2, corners2, cv::Size(5, 5), cv::Size(-1, -1),
+                     cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
+    cv::drawChessboardCorners(gray2, board_size, corners2, found2);
+
+    float square_size = 1.75;
     std::vector< cv::Point3f > obj;
-    for (int i = 0; i < 13; i++)
+    for (int i = 0; i < 14; i++)
       for (int j = 0; j < 9; j++)
-	obj.push_back(cv::Point3f((float)j * square_size, (float)i * square_size, 0));
+          obj.push_back(cv::Point3f((float)j * square_size, (float)i * square_size, 0));
 
     if (found1 && found2) {
       //cout << i << ". Found corners!" << endl;
@@ -137,15 +141,16 @@ void imageprocessor::calibrate_cameras()
 
     cv::calibrateCamera(objects_points, left_image_points, img_size, left_camera_matrix, left_dist_coeffs, leftRvecs, leftTvecs);
     cv::calibrateCamera(objects_points, right_image_points, img_size, right_camera_matrix, right_dist_coeffs, rightRvecs, rightTvecs);
-
-    cv::stereoCalibrate(objects_points, left_image_points, right_image_points, left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, E, F, cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS,30,0.000001),cv::CALIB_FIX_INTRINSIC);
+    std::cout << "icule" << std::endl;
+    cv::stereoCalibrate(objects_points, left_image_points, right_image_points, left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, E, F);
     cv::Mat R1, R2, P1, P2, Q;
     cv::stereoRectify(left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, R1, R2, P1, P2, Q, 0);
-    cv::Mat left_map1, left_map2, right_map1, right_map2;
-    cv::initUndistortRectifyMap(left_camera_matrix, left_dist_coeffs, R1, P1, img_size, CV_32FC1, left_map1, left_map2);
-    cv::initUndistortRectifyMap(right_camera_matrix, right_dist_coeffs, R2, P2, img_size, CV_32FC1, right_map1, right_map2);
-    cv::remap(left_image, left_image, left_map1, left_map2, cv::INTER_LINEAR);
-    cv::remap(right_image, right_image, right_map1, right_map2, cv::INTER_LINEAR);
+    cv::Mat limage(left_image.size.operator ()(), left_image.type());
+    cv::Mat rimage(right_image.size.operator ()(), right_image.type());
+    cv::undistort(left_image, limage, left_camera_matrix, left_dist_coeffs);
+    cv::undistort(right_image, rimage, right_camera_matrix, right_dist_coeffs);
+    cv::imshow("gauche", limage);
+    cv::imshow("droit", rimage);
 }
 
 

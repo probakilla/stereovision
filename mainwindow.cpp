@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
     QAction* actionSobel = menuEdition->addAction("Sobel");
         actionSobel->setShortcut(tr("Ctrl+B"));
         connect(actionSobel, SIGNAL(triggered()), this, SLOT(sobel()));
+    QAction* actionCalib = menuEdition->addAction("Calibrate Camera");
+         connect(actionCalib, SIGNAL(triggered()), this, SLOT(initCalib()));
     QAction* actionDispMap = menuEdition->addAction("Disparity map");
         actionDispMap->setShortcut(tr("Ctrl+M"));
         connect(actionDispMap, SIGNAL(triggered()), this, SLOT(dispMap()));
@@ -227,6 +229,18 @@ void MainWindow::sobel()
     {
         i->sobel();
         this->dispProcessedImage();
+    }
+}
+
+void MainWindow::initCalib()
+{
+    if(!split)
+    {
+        splitImageInHalf();
+    }
+    if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
+    {
+        i->calibrate_cameras();
     }
 }
 

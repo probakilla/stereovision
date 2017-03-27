@@ -45,6 +45,7 @@ public slots:
     void blur();
     void canny();
     void sobel();
+    void initCalib();
     void dispMap();
     void showKP();
     void featMatch();
