@@ -20,6 +20,8 @@ private:
     /// Return the distance from the object.
     /// todo
     float calc_dist (cv::Mat const & left_image, cv::Mat const & right_image);
+	std::vector<cv::Mat> getChessImages();
+
 
     float _last_dist;
     float _last_speed;
@@ -29,3 +31,5 @@ private:
 };
 
 #endif // ROBOT_CONTROLLER_H
+
+

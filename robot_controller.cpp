@@ -29,3 +29,29 @@ void robot_controller::process(const cv::Mat & left_img, const cv::Mat & right_i
         _last_dist = dist;
     }
 }
+
+std::vector<cv::Mat> robot_controller::getChessImages()
+{
+
+	std::vector<cv::Mat> chessImages;
+
+	//Right
+	for (unsigned i = 0; i < 20; ++i)
+	{
+		std::stringstream ss;
+		ss << "img/damier_10cm/right_" << i << ".png";
+		chessImages.push_back(cv::imread(ss.str()));
+		assert(!chessImages.at(i).empty());
+	}
+
+	//Left
+	for (unsigned i = 0; i < 0; ++i)
+	{
+		std::stringstream ss;
+		ss << "img/damier_10cm/left_" << i << ".png";
+		chessImages.push_back(cv::imread(ss.str()));
+		assert(!chessImages.at(i).empty());
+	}
+
+	return chessImages;
+}
