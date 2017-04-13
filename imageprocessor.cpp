@@ -88,6 +88,7 @@ void imageprocessor::sobel()
     cv::imshow("_processed_image", processed_image);
 }
 
+//calibre les caméras à partir d'image de damier
 void imageprocessor::calibrate_cameras()
 {
     std::vector< std::vector< cv::Point3f > > objects_points;
@@ -113,14 +114,15 @@ void imageprocessor::calibrate_cameras()
     }
 
 
+    //on affine les coordonnées obtenues
     cv::cornerSubPix(gray1, corners1, cv::Size(5, 5), cv::Size(-1, -1),
                      cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
-    cv::drawChessboardCorners(gray1, board_size, corners1, found1);
+    //cv::drawChessboardCorners(gray1, board_size, corners1, found1);
 
 
     cv::cornerSubPix(gray2, corners2, cv::Size(5, 5), cv::Size(-1, -1),
                      cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
-    cv::drawChessboardCorners(gray2, board_size, corners2, found2);
+    //cv::drawChessboardCorners(gray2, board_size, corners2, found2);
 
     float square_size = 1.75;
     std::vector< cv::Point3f > obj;
@@ -129,7 +131,6 @@ void imageprocessor::calibrate_cameras()
           obj.push_back(cv::Point3f((float)j * square_size, (float)i * square_size, 0));
 
     if (found1 && found2) {
-      //cout << i << ". Found corners!" << endl;
       left_image_points.push_back(corners1);
       right_image_points.push_back(corners2);
       objects_points.push_back(obj);
@@ -139,18 +140,21 @@ void imageprocessor::calibrate_cameras()
     cv::Mat R, T, E, F;
     std::vector<cv::Mat>leftRvecs, leftTvecs, rightRvecs, rightTvecs;
 
+    //on calbre les deux caméra séparément et ensuite avec les résultat obtenu on les calibre ensemble
     cv::calibrateCamera(objects_points, left_image_points, img_size, left_camera_matrix, left_dist_coeffs, leftRvecs, leftTvecs);
     cv::calibrateCamera(objects_points, right_image_points, img_size, right_camera_matrix, right_dist_coeffs, rightRvecs, rightTvecs);
     std::cout << "icule" << std::endl;
     cv::stereoCalibrate(objects_points, left_image_points, right_image_points, left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, E, F);
+
     cv::Mat R1, R2, P1, P2, Q;
     cv::stereoRectify(left_camera_matrix, left_dist_coeffs, right_camera_matrix, right_dist_coeffs, img_size, R, T, R1, R2, P1, P2, Q, 0);
-    cv::Mat limage(left_image.size.operator ()(), left_image.type());
-    cv::Mat rimage(right_image.size.operator ()(), right_image.type());
-    cv::undistort(left_image, limage, left_camera_matrix, left_dist_coeffs);
-    cv::undistort(right_image, rimage, right_camera_matrix, right_dist_coeffs);
-    cv::imshow("gauche", limage);
-    cv::imshow("droit", rimage);
+
+    //On enregistre les informations obtenu par la calibration qui nous seront néscessaire
+    cv::FileStorage fs("Calibration.yml", cv::FileStorage::WRITE);
+    fs << "leftCameraMatrix" << left_camera_matrix;
+    fs << "rightCameraMatrix" << right_camera_matrix;
+    fs << "leftDistCoeffs" << left_dist_coeffs;
+    fs << "rightDistCoeffs" << right_dist_coeffs;
 }
 
 
@@ -158,17 +162,31 @@ void imageprocessor::calibrate_cameras()
 //Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
-    //featureMatching();
-    left_image = qimageToCvMat(_image);
-    right_image = qimageToCvMat(_image_alt);
+    //on ouvre le fichier de calibration et on y récupère les données nescessaire pour distordre les images
+    cv::FileStorage fs("Calibration.yml", cv::FileStorage::READ);
+    cv::Mat left_camera_matrix, right_camera_matrix, left_dist_coeffs, right_dist_coeffs;
+    fs["leftCameraMatrix"] >> left_camera_matrix;
+    fs["rightCameraMatrix"] >> right_camera_matrix;
+    fs["leftDistCoeffs"] >> left_dist_coeffs;
+    fs["rightDistCoeffs"] >> right_dist_coeffs;
+
+
+    cv::Mat left_image = qimageToCvMat(_image);
+    cv::Mat right_image = qimageToCvMat(_image_alt);
+    cv::Mat left_image_undistord(left_image.size.operator ()(), left_image.type());
+    cv::Mat right_image_undistord(right_image.size.operator ()(), right_image.type());
+    cv::undistort(left_image, left_image_undistord, left_camera_matrix, left_dist_coeffs);
+    cv::undistort(right_image, right_image_undistord, right_camera_matrix, right_dist_coeffs);
+    fs.release();//on ferme le fichier
+
     // Note a propos de stereo BM : il semble inverser le blanc et le noir.
     // A voir si ça joue dans la précision de la carte de disparité.
     cv::Mat disp, disp8;
 
-    cv::cvtColor(left_image, left_image, CV_BGR2GRAY);
-    cv::cvtColor(right_image, right_image, CV_BGR2GRAY);
+    cv::cvtColor(left_image_undistord, left_image_undistord, CV_BGR2GRAY);
+    cv::cvtColor(right_image_undistord, right_image_undistord, CV_BGR2GRAY);
 
-
+    //On entre les paramètres pour la carte de disparité
     cv::StereoSGBM sgbm;
     int sadSize = 5;
     sgbm.SADWindowSize = 5;
@@ -183,7 +201,7 @@ void imageprocessor::disparity_map()
     sgbm.P1 = sadSize*sadSize*8*4;
     sgbm.P2 = sadSize*sadSize*32*4;
 
-    sgbm(left_image, right_image, disp);
+    sgbm(left_image_undistord, right_image_undistord, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
     imshow("image", disp8);
 }
