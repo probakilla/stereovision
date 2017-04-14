@@ -4,7 +4,7 @@
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{}
 {
     this->showMaximized();
-    this->setMinimumSize(800,600);
+    this->setMinimumSize(MIN_SIZE_X, MIN_SIZE_Y);
 
     widget = new QWidget(this);
     setCentralWidget(widget);
@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
         actionOpenFile->setShortcut(tr("Ctrl+O"));
         connect(actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
     QAction* actionOpenRightFile = menuFile->addAction("Ouvrir image droite");
+        actionOpenRightFile->setShortcut(tr("Ctrl+P"));
         connect(actionOpenRightFile, SIGNAL(triggered()), this, SLOT(openRightFile()));
 
     QMenu* menuEdition = menuBar()->addMenu("&Edition");
@@ -206,8 +207,8 @@ void MainWindow::splitImageInHalf(){
     if( pixMap && picture && !pixMap->isNull())
     {
         i->splitImage();
-        *pixMap = QPixmap::fromImage(i->getImage());
-        *pixMapDivided = QPixmap::fromImage(i->getImageAlt());
+        *pixMap = QPixmap::fromImage(i->getLeftImage());
+        *pixMapDivided = QPixmap::fromImage(i->getRightImage());
 
         set_pictures_to_full_size();
 
@@ -250,7 +251,7 @@ void MainWindow::initCalib()
     }
     if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        i->calibrate_cameras();
+        i->calibrateCameras();
     }
 }
 
@@ -262,7 +263,7 @@ void MainWindow::dispMap()
     }
     if( pixMap && picture && !pixMap->isNull() && !pixMapDivided->isNull())
     {
-        i->disparity_map();
+        i->disparityMap();
     }
 }
 
