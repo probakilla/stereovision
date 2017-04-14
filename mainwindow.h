@@ -64,6 +64,10 @@ private:
     QLabel *pictureDivided;
 
     bool split;
+
+    /// Constantes symboliques.
+    const int MIN_SIZE_X = 600;
+    const int MIN_SIZE_Y = 800;
 };
 
 #endif // MAINWINDOW_H
