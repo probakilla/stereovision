@@ -40,7 +40,7 @@ std::vector<cv::Mat> robot_controller::getChessImages()
 	{
 		std::stringstream ss;
 		ss << "img/damier_10cm/right_" << i << ".png";
-		chessImages.push_back(cv::imread(ss.str()));
+        chessImages.push_back(cv::imread(ss.str()));
 		assert(!chessImages.at(i).empty());
 	}
 
@@ -49,7 +49,7 @@ std::vector<cv::Mat> robot_controller::getChessImages()
 	{
 		std::stringstream ss;
 		ss << "img/damier_10cm/left_" << i << ".png";
-		chessImages.push_back(cv::imread(ss.str()));
+        chessImages.push_back(cv::imread(ss.str()));
 		assert(!chessImages.at(i).empty());
 	}
 
