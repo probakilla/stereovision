@@ -23,9 +23,11 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     imageprocessor.cpp \
     movablebutton.cpp \
-    dynamicframe.cpp
+    dynamicframe.cpp \
+    robot_controller.cpp
 
 HEADERS  += mainwindow.h \
     imageprocessor.h \
     movablebutton.h \
-    dynamicframe.h
+    dynamicframe.h \
+    robot_controller.h

@@ -51,6 +51,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), picture{}, dFrame{
         actionFeatMatch->setShortcut(tr("Ctrl+A"));
         connect(actionFeatMatch, SIGNAL(triggered()), this, SLOT(featMatch()));
 
+    QAction* test = menuEdition->addAction("Test");
+            actionFeatMatch->setShortcut(tr("Ctrl+T"));
+            connect(test, SIGNAL(triggered()), this, SLOT(test()));
+
     QMenu* menuHelp = menuBar()->addMenu("&Aide");
 
     /*QAction* actionSaveName = menuFile->addAction("&Enregistrer sous");
@@ -182,6 +186,12 @@ void MainWindow::saveName(int pix)
     }
 
 }
+
+void MainWindow::test()
+{
+    i->test();
+}
+
 
 void MainWindow::crop( QRect area)
 {

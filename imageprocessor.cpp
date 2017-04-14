@@ -66,6 +66,15 @@ void imageprocessor::blur()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+
+void imageprocessor::test()
+{
+    //std::string left = "img/6cm/left_0.png";
+    //cv::Mat leftMat = cv::imread(left ,CV_LOAD_IMAGE_COLOR);
+    cv::Mat left_image = qimageToCvMat(_image);
+    imshow("left", left_image);
+}
+
 //Applique Canny à l'image de gauche
 void imageprocessor::canny()
 {
@@ -157,8 +166,6 @@ void imageprocessor::calibrate_cameras()
     fs << "rightDistCoeffs" << right_dist_coeffs;
 }
 
-
-
 //Affiche la carte de disparité
 void imageprocessor::disparity_map()
 {
@@ -171,17 +178,23 @@ void imageprocessor::disparity_map()
     fs["rightDistCoeffs"] >> right_dist_coeffs;
 
 
-    cv::Mat left_image = qimageToCvMat(_image);
-    cv::Mat right_image = qimageToCvMat(_image_alt);
-    cv::Mat left_image_undistord(left_image.size.operator ()(), left_image.type());
+    cv::Mat left_image_undistord = qimageToCvMat(_image);
+    cv::Mat right_image_undistord = qimageToCvMat(_image_alt);
+    /*cv::Mat left_image_undistord(left_image.size.operator ()(), left_image.type());
     cv::Mat right_image_undistord(right_image.size.operator ()(), right_image.type());
     cv::undistort(left_image, left_image_undistord, left_camera_matrix, left_dist_coeffs);
-    cv::undistort(right_image, right_image_undistord, right_camera_matrix, right_dist_coeffs);
+    cv::undistort(right_image, right_image_undistord, right_camera_matrix, right_dist_coeffs);*/
     fs.release();//on ferme le fichier
 
     // Note a propos de stereo BM : il semble inverser le blanc et le noir.
     // A voir si ça joue dans la précision de la carte de disparité.
     cv::Mat disp, disp8;
+
+    cv::resize( left_image_undistord, left_image_undistord, cv::Size(), 0.5,0.5);
+    cv::resize( right_image_undistord, right_image_undistord, cv::Size(), 0.5,0.5);
+
+   // cv::GaussianBlur(left_image_undistord, left_image_undistord, cv::Size(21,21),5);
+   // cv::GaussianBlur(right_image_undistord, right_image_undistord, cv::Size(21,21),5);
 
     cv::cvtColor(left_image_undistord, left_image_undistord, CV_BGR2GRAY);
     cv::cvtColor(right_image_undistord, right_image_undistord, CV_BGR2GRAY);
@@ -192,14 +205,14 @@ void imageprocessor::disparity_map()
     sgbm.SADWindowSize = 5;
     sgbm.numberOfDisparities = 192;
     sgbm.preFilterCap = 4;
-    sgbm.minDisparity = -64;
+    sgbm.minDisparity = -52;
     sgbm.uniquenessRatio = 5;
     sgbm.speckleWindowSize = 150;
     sgbm.speckleRange = 2;
     sgbm.disp12MaxDiff = 10;
     sgbm.fullDP = false;
-    sgbm.P1 = sadSize*sadSize*8*4;
-    sgbm.P2 = sadSize*sadSize*32*4;
+    sgbm.P1 = sadSize*sadSize*8*3;
+    sgbm.P2 = sadSize*sadSize*32*3;
 
     sgbm(left_image_undistord, right_image_undistord, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);

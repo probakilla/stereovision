@@ -49,6 +49,7 @@ public slots:
     void dispMap();
     void showKP();
     void featMatch();
+    void test();
 
 private:
     void set_pictures_to_full_size();
