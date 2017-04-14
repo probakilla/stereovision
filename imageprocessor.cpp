@@ -79,6 +79,15 @@ void imageprocessor::blur()
     _processed_image = imageprocessor::cvMatToQimage(dest);
 }
 
+
+void imageprocessor::test()
+{
+    //std::string left = "img/6cm/left_0.png";
+    //cv::Mat leftMat = cv::imread(left ,CV_LOAD_IMAGE_COLOR);
+    cv::Mat left_image = qimageToCvMat(_image);
+    imshow("left", left_image);
+}
+
 //Applique Canny à l'image de gauche
 void imageprocessor::canny()
 {
@@ -180,8 +189,6 @@ void imageprocessor::calibrateCameras()
     fs.release();
 }
 
-
-
 //Affiche la carte de disparité
 void imageprocessor::disparityMap()
 {
@@ -207,11 +214,18 @@ void imageprocessor::disparityMap()
     // A voir si ça joue dans la précision de la carte de disparité.
     cv::Mat disp, disp8;
 
+    cv::resize( left_image_undistord, left_image_undistord, cv::Size(), 0.5,0.5);
+    cv::resize( right_image_undistord, right_image_undistord, cv::Size(), 0.5,0.5);
+
+   // cv::GaussianBlur(left_image_undistord, left_image_undistord, cv::Size(21,21),5);
+   // cv::GaussianBlur(right_image_undistord, right_image_undistord, cv::Size(21,21),5);
+
     cv::cvtColor(left_image_undistord, left_image_undistord, CV_BGR2GRAY);
     cv::cvtColor(right_image_undistord, right_image_undistord, CV_BGR2GRAY);
 
     //On entre les paramètres pour la carte de disparité
     cv::StereoSGBM sgbm;
+
     sgbm.SADWindowSize = SAD_SIZE;
     sgbm.numberOfDisparities = NB_DISPARITIES;
     sgbm.preFilterCap = PRE_FILTER_CAP;

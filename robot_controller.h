@@ -1,10 +1,9 @@
-#ifndef ROBOT_CONTROLLER_H
-#define ROBOT_CONTROLLER_H
-
 #pragma once
 
 #include "opencv2/core/core.hpp"
-#include "opencv2/highgui.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/calib3d/calib3d.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 class robot_controller
 {
@@ -14,8 +13,11 @@ public:
   /// - vy: lateral speed [m/s] (+ is left)
   /// - omega: angular speed [rad/s] (+ is rotating to left)
 
-  virtual void process(const cv::Mat & left_img, const cv::Mat & right_img, float * vx, float * vy, float * omega) = 0;
+  virtual void process(const cv::Mat & left_img, const cv::Mat & right_img, float * vx, float * vy, float * omega);
   robot_controller ();
+
+  cv::Mat disparity(const cv::Mat & left_image, const cv::Mat & right_image);
+  cv::Mat diff(const cv::Mat & image1, const cv::Mat & image2);
 
 private:
     /// Return the distance from the object.
@@ -29,8 +31,8 @@ private:
 
     const float INITIAL_SPEED = 4.0;
     const float DT = 0.5;
-};
 
-#endif // ROBOT_CONTROLLER_H
+    cv::Mat lastDisp;
+};
 
 
