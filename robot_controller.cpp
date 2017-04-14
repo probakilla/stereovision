@@ -11,7 +11,7 @@ float robot_controller::calc_dist (const cv::Mat & left_image, const cv::Mat & r
 
 cv::Mat robot_controller::disparity(const cv::Mat & left_image, const cv::Mat & right_image)
 {
-    float resize = 0.8f;
+    float downSize = 0.8f;
 
     cv::Mat disp, disp8;
     cv::Mat left_image_cpy, right_image_cpy;
@@ -19,8 +19,8 @@ cv::Mat robot_controller::disparity(const cv::Mat & left_image, const cv::Mat & 
     cv::cvtColor(left_image, left_image_cpy, CV_BGR2GRAY);
     cv::cvtColor(right_image, right_image_cpy, CV_BGR2GRAY);
 
-    cv::resize( left_image_cpy, left_image_cpy, cv::Size(), resize,resize);
-    cv::resize( right_image_cpy, right_image_cpy, cv::Size(), resize,resize);
+    cv::resize( left_image_cpy, left_image_cpy, cv::Size(), downSize,downSize);
+    cv::resize( right_image_cpy, right_image_cpy, cv::Size(), downSize,downSize);
 
 
     // cv::GaussianBlur(left_image_undistord, left_image_undistord, cv::Size(21,21),5);
@@ -44,10 +44,32 @@ cv::Mat robot_controller::disparity(const cv::Mat & left_image, const cv::Mat & 
     sgbm(left_image_cpy, right_image_cpy, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
 
+    /*int dilation_size = 2;
+
+    //erosion
+    cv::erode(disp8, disp8, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2*dilation_size + 1,2*dilation_size + 1)));
+
+    //Dilatation
+
+    int dilation_type = cv::MORPH_RECT; // MORPH_CROSS MORPH_ELLIPSE
+
+    cv::Mat element = cv::getStructuringElement( dilation_type,
+                                         cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ),
+                                         cv::Point( dilation_size, dilation_size ) );
+    dilate( disp8, disp8, element );*/
+
     return disp8;
 }
 
+cv::Mat robot_controller::diff(const cv::Mat & image1, const cv::Mat & image2)
+{
+    cv::Mat motion;
+    cv::absdiff(image1, image2, motion);
+    cv::threshold(motion, motion, 80, 255, cv::THRESH_BINARY);
+    cv::erode(motion, motion, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5)));
 
+    return motion;
+}
 
 void robot_controller::process(const cv::Mat & left_img, const cv::Mat & right_img, float * vx, float * vy, float * omega)
 {

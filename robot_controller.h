@@ -17,6 +17,7 @@ public:
   robot_controller ();
 
   cv::Mat disparity(const cv::Mat & left_image, const cv::Mat & right_image);
+  cv::Mat diff(const cv::Mat & image1, const cv::Mat & image2);
 
 private:
     /// Return the distance from the object.
@@ -30,6 +31,8 @@ private:
 
     const float INITIAL_SPEED = 4.0;
     const float DT = 0.5;
+
+    cv::Mat lastDisp;
 };
 
 
