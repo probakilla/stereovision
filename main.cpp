@@ -42,11 +42,30 @@ int main(int argc, char *argv[])
     auto disp2 = rc.disparity( left2, right2 );
     auto diff = rc.diff( disp, disp2);
 
+    cv::Mat depth_map( diff.size(), CV_BGR2GRAY);
+
+    for(int y=0;y<depth_map.rows;y++)
+    {
+        for(int x=0;x<depth_map.cols;x++)
+        {
+            // get pixel
+            cv::Vec3b color = depth_map.at<cv::Vec3b>(cv::Point(x,y));
+
+            color[0] = 0;
+            color[1] = 0;
+            color[2] = 0;
+
+            // set pixel
+            depth_map.at<cv::Vec3b>(cv::Point(x,y)) = color;
+        }
+    }
+
     cv::imshow("base", right);
     cv::imshow("base2", right2);
     cv::imshow("disp", disp);
     cv::imshow("disp2", disp2);
     cv::imshow("img", diff);
+    cv::imshow("depth", depth_map);
 
     cv::waitKey();
 
