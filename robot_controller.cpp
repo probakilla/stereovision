@@ -2,6 +2,51 @@
 
 robot_controller::robot_controller () : _last_dist (-1.0) {}
 
+void robot_controller::test()
+{
+
+    std::string right_im = "julpilleux/img/damier_10cm/right_10.png";
+    std::string left_im = "julpilleux/img//damier_10cm//left_10.png";
+    std::string right_im2 = "julpilleux/img/damier_10cm/right_11.png";
+    std::string left_im2 = "julpilleux/img/damier_10cm/left_11.png";
+
+    cv::Mat right = cv::imread(right_im, cv::IMREAD_COLOR);
+    if ( right.empty() ){
+        //std::cout<<"Cannot read image file: "<< right_im;
+        return ;
+    }
+    cv::Mat left = cv::imread(left_im, cv::IMREAD_COLOR);
+    if ( left.empty() ){
+        //std::cout<<"Cannot read image file: "<< left_im;
+        return ;
+    }
+
+    cv::Mat right2 = cv::imread(right_im2, cv::IMREAD_COLOR);
+    if ( right2.empty() ){
+        //std::cout<<"Cannot read image file: "<< right_im2;
+        return ;
+    }
+    cv::Mat left2 = cv::imread(left_im2, cv::IMREAD_COLOR);
+    if ( left2.empty() ){
+        //std::cout<<"Cannot read image file: "<< left_im2;
+        return ;
+    }
+
+    auto disp = disparity( left, right );
+    auto disp2 = disparity( left2, right2 );
+    auto diff_map = diff( disp, disp2);
+    auto depth_map = depthMap(disp);
+
+    cv::imshow("base", right);
+    cv::imshow("base2", right2);
+    cv::imshow("disp", disp);
+    cv::imshow("disp2", disp2);
+    //cv::imshow("diff", diff_map);
+    cv::imshow("depth", depth_map);
+
+    cv::waitKey();
+}
+
 float robot_controller::calc_dist (const cv::Mat & left_image, const cv::Mat & right_image)
 {
 
@@ -23,8 +68,8 @@ cv::Mat robot_controller::disparity(const cv::Mat & left_image, const cv::Mat & 
     cv::resize( right_image_cpy, right_image_cpy, cv::Size(), downSize,downSize);
 
 
-    // cv::GaussianBlur(left_image_undistord, left_image_undistord, cv::Size(21,21),5);
-    // cv::GaussianBlur(right_image_undistord, right_image_undistord, cv::Size(21,21),5);
+     cv::GaussianBlur(left_image_cpy, left_image_cpy, cv::Size(21,21),5);
+     cv::GaussianBlur(right_image_cpy, right_image_cpy, cv::Size(21,21),5);
 
     //On entre les paramètres pour la carte de disparité
     cv::StereoSGBM sgbm;
@@ -44,30 +89,39 @@ cv::Mat robot_controller::disparity(const cv::Mat & left_image, const cv::Mat & 
     sgbm(left_image_cpy, right_image_cpy, disp);
     normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
 
-    /*int dilation_size = 2;
-
-    //erosion
-    cv::erode(disp8, disp8, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2*dilation_size + 1,2*dilation_size + 1)));
-
-    //Dilatation
-
-    int dilation_type = cv::MORPH_RECT; // MORPH_CROSS MORPH_ELLIPSE
-
-    cv::Mat element = cv::getStructuringElement( dilation_type,
-                                         cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ),
-                                         cv::Point( dilation_size, dilation_size ) );
-    dilate( disp8, disp8, element );*/
-
     return disp8;
+}
+
+cv::Mat robot_controller::depthMap( cv::Mat disp )
+{
+    cv::Mat depth_map( disp.size(), CV_32F, 0.2f);
+
+    for(int y=0;y<depth_map.rows;y++)
+    {
+        for(int x=0;x<depth_map.cols;x++)
+        {
+            float distance = 1;
+            float disparity = disp.at<uchar>(cv::Point(x,y));
+            if( disparity != 0 )
+                distance = (FOCAL_LENGTH * CAMERA_SPACING) / ( 2 * PIXEL_SIZE * disparity);
+
+            std::cout << distance << " " ;
+
+            depth_map.at<float>(cv::Point(x,y)) = distance;
+        }
+    }
+
+
+    return depth_map;
 }
 
 cv::Mat robot_controller::diff(const cv::Mat & image1, const cv::Mat & image2)
 {
-    cv::Mat motion;
-    cv::absdiff(image1, image2, motion);
-    cv::threshold(motion, motion, 80, 255, cv::THRESH_BINARY);
-    cv::erode(motion, motion, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5)));
+    using namespace cv;
 
+    Mat motion;
+    absdiff(image1, image2, motion);
+    motion = motion > 125;
     return motion;
 }
 
