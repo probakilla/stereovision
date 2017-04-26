@@ -48,7 +48,7 @@ void robot_controller::test()
     cv::waitKey();
 }
 
-float robot_controller::calc_dist (const cv::Mat & depth_map, const cv::Mat & diff_map)
+double robot_controller::calc_dist (const cv::Mat & depth_map, const cv::Mat & diff_map)
 {
     using namespace std;
     vector< vector<int> > xy_diff;
@@ -78,7 +78,7 @@ float robot_controller::calc_dist (const cv::Mat & depth_map, const cv::Mat & di
     }
     double average = add/nb_elem;
     cout << "distance moyenne " << average << endl;
-    return 0;
+    return average;
 }
 
 cv::Mat robot_controller::disparity(const cv::Mat & left_image, const cv::Mat & right_image)

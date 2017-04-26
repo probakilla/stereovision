@@ -27,7 +27,7 @@ public:
 private:
     /// Return the distance from the object.
     /// todo
-    float calc_dist (const cv::Mat & depth_map, const cv::Mat & diff_map);
+    double calc_dist (const cv::Mat & depth_map, const cv::Mat & diff_map);
 	std::vector<cv::Mat> getChessImages();
 
 
