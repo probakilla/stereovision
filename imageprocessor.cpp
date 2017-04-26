@@ -84,7 +84,7 @@ void imageprocessor::test()
 {
     //std::string left = "img/6cm/left_0.png";
     //cv::Mat leftMat = cv::imread(left ,CV_LOAD_IMAGE_COLOR);
-    cv::Mat left_image = qimageToCvMat(_image);
+    cv::Mat left_image = qimageToCvMat(_left_image);
     imshow("left", left_image);
 }
 
@@ -194,12 +194,11 @@ void imageprocessor::disparityMap()
 {
     //on ouvre le fichier de calibration et on y récupère les données nescessaire pour enlever la distortion des images
     cv::FileStorage fs("Calibration.yml", cv::FileStorage::READ);
-    cv::Mat left_camera_matrix, right_camera_matrix, left_dist_coeffs, right_dist_coeffs;
+    cv::Mat left_camera_matrix, right_camera_matrix, left_dist_coeffs, right_dist_coeffs, Q;
     fs["leftCameraMatrix"] >> left_camera_matrix;
     fs["rightCameraMatrix"] >> right_camera_matrix;
     fs["leftDistCoeffs"] >> left_dist_coeffs;
     fs["rightDistCoeffs"] >> right_dist_coeffs;
-
 
     cv::Mat left_image = qimageToCvMat(_left_image);
     cv::Mat right_image = qimageToCvMat(_right_image);
@@ -207,11 +206,8 @@ void imageprocessor::disparityMap()
     cv::Mat right_image_undistord(right_image.size(), right_image.type());
     cv::undistort(left_image, left_image_undistord, left_camera_matrix, left_dist_coeffs);
     cv::undistort(right_image, right_image_undistord, right_camera_matrix, right_dist_coeffs);
-    cv::imshow("image droite", right_image_undistord);
     fs.release();//on ferme le fichier
 
-    // Note a propos de stereo BM : il semble inverser le blanc et le noir.
-    // A voir si ça joue dans la précision de la carte de disparité.
     cv::Mat disp, disp8;
 
     cv::resize( left_image_undistord, left_image_undistord, cv::Size(), 0.5,0.5);

@@ -55,7 +55,7 @@ public:
 
 private:
     QImage _left_image;
-    QImage _right_image;// The right part of the image
+    QImage _right_image;
     QImage _processed_image;
     std::vector<cv::KeyPoint> left_keypoints, right_keypoints;
     bool _is_croped;
