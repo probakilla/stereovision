@@ -36,6 +36,7 @@ void robot_controller::test()
     auto disp2 = disparity( left2, right2 );
     auto diff_map = diff( disp, disp2);
     auto depth_map = depthMap(disp);
+    calc_dist(depth_map,  diff_map);
 
     cv::imshow("base", right);
     cv::imshow("base2", right2);
@@ -47,10 +48,36 @@ void robot_controller::test()
     cv::waitKey();
 }
 
-float robot_controller::calc_dist (const cv::Mat & left_image, const cv::Mat & right_image)
+float robot_controller::calc_dist (const cv::Mat & depth_map, const cv::Mat & diff_map)
 {
+    using namespace std;
+    vector< vector<int> > xy_diff;
+    //On parcours la carte des différence entre les matrices de disparité (de la caméra gauche et droites) pour voir si quelque chose a bougé
+    for (int i = 0; i < diff_map.rows; ++i)
+    {
+        for (int j = 0; j < diff_map.cols; ++j)
+           {
+                //Cela signifie que l'élément à bougé donc on récupère ses coordonnées
+               if ((int)diff_map.at<uchar>(i, j) == 255)
+               {
+                    vector<int> row;
+                    row.push_back(i);
+                    row.push_back(j);
+                    xy_diff.push_back(row);
+               }
 
-    // Todo.
+            }
+    }
+    int size = xy_diff.size();
+    long int nb_elem = 0;
+    double add = 0.0;
+    for (int i = 0; i < size; ++i)
+    {
+        add += depth_map.at<double>(cv::Point(xy_diff[i][0], xy_diff[i][1]));;
+        ++nb_elem;
+    }
+    double average = add/nb_elem;
+    cout << "distance moyenne " << average << endl;
     return 0;
 }
 
@@ -117,7 +144,7 @@ cv::Mat robot_controller::diff(const cv::Mat & image1, const cv::Mat & image2)
 {
     using namespace cv;
 
-    Mat motion;
+    Mat_<uchar> motion;
     absdiff(image1, image2, motion);
     motion = motion > 125;
     return motion;
