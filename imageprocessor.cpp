@@ -84,13 +84,8 @@ void imageprocessor::test()
 {
     //std::string left = "img/6cm/left_0.png";
     //cv::Mat leftMat = cv::imread(left ,CV_LOAD_IMAGE_COLOR);
-<<<<<<< HEAD
-    cv::Mat left_image = qimageToCvMat(_left_image);
-    imshow("left", left_image);
-=======
     //cv::Mat left_image = qimageToCvMat(_image);
     //imshow("left", left_image);
->>>>>>> 0740da9268a30d071e1d113aecebbb652d72c502
 }
 
 //Applique Canny à l'image de gauche
