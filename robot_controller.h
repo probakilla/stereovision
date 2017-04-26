@@ -27,7 +27,7 @@ public:
 private:
     /// Return the distance from the object.
     /// todo
-    float calc_dist (cv::Mat const & left_image, cv::Mat const & right_image);
+    float calc_dist (const cv::Mat & depth_map, const cv::Mat & diff_map);
 	std::vector<cv::Mat> getChessImages();
 
 
@@ -41,7 +41,6 @@ private:
     const float PIXEL_SIZE = 0.00000375;
     const float CAMERA_SPACING = 0.1;
     const float MAX_DISTANCE = 20;
-
     cv::Mat lastDisp;
 };
 

@@ -41,7 +41,7 @@ void robot_controller::test()
     cv::imshow("base2", right2);
     cv::imshow("disp", disp);
     cv::imshow("disp2", disp2);
-    //cv::imshow("diff", diff_map);
+    cv::imshow("diff", diff_map);
     cv::imshow("depth", depth_map);
 
     cv::waitKey();
@@ -110,8 +110,6 @@ cv::Mat robot_controller::depthMap( cv::Mat disp )
             depth_map.at<float>(cv::Point(x,y)) = distance;
         }
     }
-
-
     return depth_map;
 }
 
