@@ -5,6 +5,8 @@
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#include <iostream>
+
 class robot_controller
 {
 public:
@@ -18,11 +20,14 @@ public:
 
   cv::Mat disparity(const cv::Mat & left_image, const cv::Mat & right_image);
   cv::Mat diff(const cv::Mat & image1, const cv::Mat & image2);
+  cv::Mat depthMap(cv::Mat disp);
+
+  void test();
 
 private:
     /// Return the distance from the object.
     /// todo
-    float calc_dist (cv::Mat const & left_image, cv::Mat const & right_image);
+    float calc_dist (const cv::Mat & depth_map, const cv::Mat & diff_map);
 	std::vector<cv::Mat> getChessImages();
 
 
@@ -32,6 +37,10 @@ private:
     const float INITIAL_SPEED = 4.0;
     const float DT = 0.5;
 
+    const float FOCAL_LENGTH = 0.0035;
+    const float PIXEL_SIZE = 0.00000375;
+    const float CAMERA_SPACING = 0.1;
+    const float MAX_DISTANCE = 20;
     cv::Mat lastDisp;
 };
 
